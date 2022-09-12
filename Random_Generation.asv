@@ -8,11 +8,11 @@ close all
 clc
 
 %% Cantidad máxima de peatones
-n_max = 100;                                                                 % Cantidad máxima de peatones a considerar
+n_max = 20;                                                                 % Cantidad máxima de peatones a considerar
 n_vect = (1:1:n_max)';
 %% Masa
 mu_m = 70;  % kg                                                            % Media de la distribución de masa
-sigma_m = 3; % kg                                                           % Desviación estándar de la distribución de masa
+sigma_m = 1; % kg                                                           % Desviación estándar de la distribución de masa
 m_vect = normrnd(mu_m,sigma_m,[n_max,1]);                                       % Valores aleatorios de masa para 'n' peatones
 
 %% Velocidad
@@ -27,9 +27,9 @@ freq_vect = normrnd(mu_freq,sigma_freq,[n_max,1]);                              
 
 %% Tiempo para añadir
 % Tiempo que se demora para añadir al peatón i
-Tadd_min = 0;
-Tadd_max = 15;
-Taddvectprima = randi([Tadd_min,Tadd_max],[n_max-1,1]);
+mu_Tadd = 20; % sec
+sigma_Tadd = 10; % sec
+Taddvectprima = normrnd(mu_Tadd,sigma_Tadd,[n_max-1,1]);
 Tadd_vect = [0;Taddvectprima];
 
 %% Lado para añadir

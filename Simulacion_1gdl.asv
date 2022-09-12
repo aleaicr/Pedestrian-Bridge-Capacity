@@ -9,10 +9,8 @@ close all
 clc
 
 %% Cantidad máxima de peatones
-n_min = 1;
 n_max = 10;
-n_step = 1;
-peatones = (n_min:n_step:n_max)';
+
 %% Propiedades Sistema 1GDL
 m = 1; % kg                                                                 % Masa del carro
 k = 1; % N/m                                                                % Rigidez resorte
@@ -22,8 +20,8 @@ c = 1; % N/(m/s)                                                            % Am
 % Fuerza de peatón i ->   F = G_i * sin(freq_i*t)
 
 % Amplitud sinusoide
-mu_G = 100; % N
-sigma_G = 40; % N
+mu_G = 10; % N
+sigma_G = 1; % N
 G_vect = normrnd(mu_G,sigma_G,[n_max,1]);
 
 % Frecuencias sinusoide
@@ -39,14 +37,14 @@ desfase_vect = 2*pi*rand(n_max,1);                                          % Qu
 
 %% Tiempo para añadir
 % Tiempo que se demora para añadir al peatón i
-Tadd_min = 0;
-Tadd_max = 15;
-Taddvectprima = randi([Tadd_min,Tadd_max],[n_max-1,1]);
+mu_Tadd = 8; % sec
+sigma_Tadd = 2; % sec
+Taddvectprima = normrnd(mu_Tadd,sigma_Tadd,[n_max-1,1]);
 Tadd_vect = [0;Taddvectprima];
 
 %% Mostrar en tabla 
 tabla = table();
-tabla.Peaton = peatones;
+tabla.Peaton = (1:1:n_max)';
 tabla.Tadd = Tadd_vect;
 tabla.Amplitud = G_vect;
 tabla.Frecuencia = freq_vect;
@@ -54,30 +52,18 @@ tabla.Desfase = desfase_vect;
 disp(tabla)
 clear tabla
 
-%% Figura Fuerza en función del tiempo
+%% Fuerza en función del tiempo
 % t_init = 0;
 % t_final = 1800;
 % t_step = 0.1;
 % t_vect = (t_init:t_step:t_final)';
 syms t;
 F_vect = G_vect.*sin(freq_vect*t+desfase_vect);
-figure
+figure  Name                                                                % Figura sinusoides desfasadas
 fplot(F_vect)
 xlabel('tiempo (t) [sec]')
 ylabel('Fuerza (F) [N]')
 title('Fuerza realizada por peatones')
-grid on
-
-%% Figura Peatones en puente vs tiempo
-
-Tadd_cum = cumsum(Tadd_vect);
-figure
-stairs(Tadd_cum,peatones)
-ylim([0,n_max])
-grid on
-xlabel('tiempo (t) [sec]')
-ylabel('Cantidad de peatones en puente')
-title('Cantidad de peatones simultáneamente en el puente')
 
 %% Representación espacio estado
 % de 1GDL -> carrito
