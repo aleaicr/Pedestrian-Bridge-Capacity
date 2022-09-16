@@ -1,7 +1,6 @@
-%% Simulación 1 Carro, N personas
-% Se obtiene la respuesta máxima de 1 carro (1GDL) con N personas arriba
+%% Simulación 1GDL, N Personas
+% Se obtiene la respuest de 1 carro (1GDL) con N personas arriba
 % que ejercen fuerzas horizontales al caminar, 
-
 
 %% Inicialziar
 clear variables
