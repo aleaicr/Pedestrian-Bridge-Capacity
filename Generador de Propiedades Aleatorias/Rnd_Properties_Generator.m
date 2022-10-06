@@ -2,17 +2,21 @@
 % Genera un archivo cargable (load) de propiedades aleatorias de los
 % peatones
 
+%% Comentarios
+% TRANSFORMAR A FUNCIÓN PARA IMPLEMENTAR EN SIMULACIONES
+
 %% Inicializar
 clear variables
 close all
 clc
 
 %% Peatones y grupos
-n_min = 1;                                                                % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
-n_max = 165;
-n_step = 5;                                                                 % Cuantos peatones van en "cada peatón"
+n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
+n_max = 40;
+n_step = 5;                                                                 % Cuantos peatones van en "cada peatón"/grupo
+
 peatones = (n_min:1:n_max)';
-grupos = ((n_min-1)+n_step:n_step:n_max)';                                            % 
+grupos = ((n_min-1)+n_step:n_step:n_max)';                                 
 np = length(peatones);
 ng = length(grupos);                                                        % Cantidad de grupos o peatones
 num_grupo = (1:1:ng)';
@@ -32,7 +36,7 @@ end
 
 %% Masa
 mu_m = 80;  % kg                                                            % Media de la distribución de masa
-sigma_m = 5; % kg                                                           % Desviación estándar de la distribución de masa
+sigma_m = 15; % kg                                                          % Desviación estándar de la distribución de masa
 
 if n_step == 1                                                              % Valores aleatorios de masa para 'n' peatones
     m_vect = n_step*normrnd(mu_m,sigma_m,[np,1]);  
@@ -42,7 +46,7 @@ end
 
 %% Velocidad
 mu_v = 5; % km/h                                                            % Media
-sigma_v = 1; % km/h                                                         % Desviación estándar
+sigma_v = 2; % km/h                                                         % Desviación estándar
 
 if n_step == 1                                                              % Vector
     v_vect = normrnd(mu_v,sigma_v,[np,1]); 
@@ -63,7 +67,7 @@ end
 %% Tiempo para añadir
 % Tiempo que se demora para añadir al peatón i
 Tadd_min = 0;
-Tadd_max = 4;
+Tadd_max = 10;
 if n_step == 1
     Taddvectprima = randi([Tadd_min,Tadd_max],[np-1,1]);
 else
