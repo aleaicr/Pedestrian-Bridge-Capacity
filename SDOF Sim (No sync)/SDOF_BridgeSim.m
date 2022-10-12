@@ -19,12 +19,11 @@ n_step = 1;
 peatones = (n_min:n_step:n_max)';
 peatones_length = length(peatones);
 
-
 %% Propiedades Sistema 1GDL
 % Ingreso propiedades de Marcheggiani & Lenci (2009) Figura 5, pág 7
-m = 113000; % kg                                                                 % Masa del carro
-k = 4730000; % Kg/m                                                                % Rigidez resorte
-c = 11000; % kgf/(m/s)                                                            % Amortiguamiento
+m = 113000; %                                                               % Masa del carro
+k = 4730000; %                                                              % Rigidez resorte
+c = 11000; %                                                                % Amortiguamiento
 
 % xi = 0.0075, Omega = sqrt(K/M) = 6.47 -> freq = 
 

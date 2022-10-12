@@ -2,8 +2,6 @@
 % Genera un archivo cargable (load) de propiedades aleatorias de los
 % peatones del modelo del caminante tipo van der Pol (Belykh 2017)
 
-
-
 %% Comentarios
 % TRANSFORMAR A FUNCIÓN PARA IMPLEMENTAR EN SIMULACIONES
 
