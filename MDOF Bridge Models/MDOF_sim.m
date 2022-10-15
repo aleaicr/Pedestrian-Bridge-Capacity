@@ -7,12 +7,11 @@ close all
 clc
 
 %% Random Properties Generation
-% For each pedestrian we generate random: Tadd, Side, Mass, Speed,
-% Frequency
-load rnd_pedstrian_properties
+% For each pedestrian we generate random properties
+load ..\RandomProperties\rnd_pedstrian_properties
 
 %% Bridge Properties
 % Import the MDOF properties for the bridge 
-load bridge_properties
+load ..\BridgeProperties\MDOF_bridge_properties
 
 %%
