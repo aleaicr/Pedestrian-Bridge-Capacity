@@ -37,8 +37,8 @@ porc_P0 = 0.15; % Fhorizontal = 15%*Fvertical                               % Po
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
 Mpuente = rho_lin*L; % 50377.709 % kg                                       % Masa del puente                                
 xi = 1/100;
-zrmodal = xi*diag(ones(cant_modos));                                        % Vector
 cant_modos = 5;                                                             % Cantidad de modos de vibrar a considerar                         
+zrmodal = xi*diag(ones(cant_modos));                                        % Vector
 
 syms x t                                                                    
 % viga -> E,rho,I,A,L
@@ -72,13 +72,24 @@ t_length = length(t_vect);
 %% Modos asumidos
 
 % Forma modal (se almacena en structs)
+% psi_n = sin(n*pi*x/L)
+
 psis = struct();                                                            % Inicializar struct     
 psi = sym(zeros(1,cant_modos));
-for i = 1:cant_modos
-    nameVal = strcat('psi',string(i));                                      % Nombre de variable
-    psis.(nameVal) = sin(i*pi*x/L);                                         % Forma modal de cada modo
-    psi(i) = sin(i*pi*x/L);
+for n = 1:cant_modos
+    nameVal = strcat('psi',string(n));                                      % Nombre de variable
+    psis.(nameVal) = sin(n*pi*x/L);                                         % Forma modal de cada modo
+    psi(n) = sin(n*pi*x/L);
 end
+
+% % fplot modos
+% figure
+% fplot(psi)
+% xlim([0 L])
+% legend(string(psi));
+% xlabel('Posición en puente [m]')
+% ylabel('Forma modal')
+% title('Formas Modales')
 
 % Derivadas
 dpsi = diff(psi,x);
@@ -136,14 +147,35 @@ Ge = eye(cant_modos,cant_modos);                                             % M
 % Esta fórmula es para amortiguadores físicos, no es proporcional ni 
 % inherente a la estructura necesariamente
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%% AMORTIGUAMIENTO PROPORCIONAL MODAL %%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Amortiguamiento de Rayleigh (No ocupar)
+% [Phi, lambda] = eig(Ke,Me);                                                 % Problema de valores y vectores propios
+% wr = diag(lambda.^0.5);                                                     % Frecuencia de cada modo                                                           % Periodo de cada modo
+% Mr = Phi'*Me*Phi;
+% Kr = Phi'*Ke*Phi;
+% 
+% % Utilizando solo los dos primeros modos
+% syms alfa beta
+% sol = solve(zrmodal(1) - 1/2*(alfa/wr(1) + beta*wr(1)),zrmodal(2) - 1/2*(alfa/wr(2) + beta*wr(2)));
+% alfa = double(sol.alfa);
+% beta = double(sol.beta);
+% clear sol
+% % Componer Ce
+% Cr = alfa*Mr + beta*Kr;                                                     % alfa es mucho mayor que beta, mucha participación de la masa (cuidado con sobreestimar)
+% Ce = alfa*Me + beta*Ke;
+
+% Amortiguamiento proporcional modal
+% zrmodal: tiene todos los amortiguamientos que se quieren para cada modo
+[~, lambda] = eig(Ke,Me);                                                   % Problema de valores y vectores propios
+wn = sqrt(diag(lambda));  
+Phi = eye(cant_modos);
+Ce = (Me*Phi)*diag(2*zrmodal.*wn./Me).*(Me*Phi).';    % Esto es C
+
+% Cmododal = Phi'*C*Phi                             % Esto es Cr
+[Phi, lambda] = eig(Ke,Me);                                                 % Problema de valores y vectores propios
+Ce2 = (Me*Phi)*diag(2*zrmodal.*wn./Me).*(Me*Phi).';    % Esto es C
 
 %% Participación modal
-gammae = Me\Ge;
+% gammae = diag(Me^-1*Ge);    % No está listo, o malo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% OBTENER PARTICIPACIÓN MODAL DE CADA MODO %%%%%%%%%%%%%%%
@@ -179,13 +211,13 @@ damp(modelo)
 % Cargar los valores de Pe_vect para la simulación
 % Fijarse en que tienen los valores de tiempo, Omega, L coherentes con los
 % que están en archivo Pe_vect_generator.m
+Pe_vect = [];
 
-load('Pe_vect_data')                                                        % Calcularlos solo una vez e ingresarlos, se demora mucho en cada simulación
 Pe_vect_sim = [t_vect Pe_vect];
 % id est [0 Pe1 Pe2; 0.1 Pe1 Pe2; 0.2....];
 
 % Ejecutar simulación
-out = sim('Bridge_simu_E0_test');                                                % Ejecución de modelo simulink para puente
+out = sim('Bridge_simu_E0');                                                % Ejecución de modelo simulink para puente
 
 %% Desplazamientos
 % Discretizando 
