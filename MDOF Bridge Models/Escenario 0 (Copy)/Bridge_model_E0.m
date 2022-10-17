@@ -2,16 +2,13 @@
 % Alexis Contreras R. - Constanza Escalona P.
 % Dinámica Estructural Avanzada - 2022(1)
 % Escenario 0: Puente sin TMD
-
-% Este script y simulink asociado, actualmente soportan solo dos modos.
+% MODELO PUENTE CON CARGAS SINCRONIZADAS
 
 % Verificar que en Pe_vect_generator.m se tienen los mismos parámetros que
 % se desean acá, correr el archivo (Pe_vect_generator.m) para que genere el
-% archivo que se carga en esta simulación (Pe_vect_data.mat). También,
-% habría que corregir líneas 159 y 160 si se desean más modos (Pe1_vect_sim
-% y Pe2_vect_sim).
+% archivo que se carga en esta simulación (Pe_vect_data.mat).
 
-% La simulación se realiza en archivo Bridge_TMD_simu_E0.slx
+% La simulación se realiza en archivo Bridge_simu_E0.slx
 
 %% Inicializar
 clear variables
@@ -44,23 +41,19 @@ syms x t
 % viga -> E,rho,I,A,L
 % x: posición para función de forma (0 < x < L)
 
-% Propiedades TMD
-% Ktmd_max = 200000;                                                         % Valor máximo de la rigidez del TMD
-% Ktmd_step = 100;                                                           % Paso de la rigidez del TMD
-% Ktmd_vect = 50:Ktmd_step:Ktmd_max;                                          % Vector con las rigideces del TMD a evaluar
-%  
-% porcMtmd_max = 0.5;                                                         % Porcentaje máximo de la masa del TMD en función del peso del puente (Mtmd = 30% Mpuente)
-% porcMtmd_step = 0.05;                                                       % Paso de aumento del porncetaje de masa del TMD
-% porcMtmd_vect = 0.05:porcMtmd_step:porcMtmd_max;                            % Vector con los porcentajes de masa del TMD a evaluar
-% 
-% ctmd = 0.01;                                                                % Amortiguamiento del TMD
-
 % Discretización del puente
 cant_particiones = 10;                                                      % Cantidad de particiones para discretizar el puente
 x_vals = 0:L/cant_particiones:L;                                            % Discretización del puente
 
 % Fuerzas peatonales
 P = Po*sin(Omega*t);                                                        % Carga horizontal distribuida en el puente
+
+% Notar que no depende de x, ya que estas asumen que todas las personas
+% están sincronizadas en todo el largo del puente. Para este modelo de puente,
+% no es necesario que las personas estén sincronizadas, se pueden reingresar 
+% al puente en un simulink o definir una función en el script de matlab que
+% depende de x. Si se quieren incluir individualmente, entonces Pe tendría
+% que componerse por una sumatoria de fuerzas puntuales.
 
 % Parámetros simulaciones
 t_init = 0;                                                                 % Tiempo inicial de la simulación
@@ -69,20 +62,19 @@ t_step = 1/1000;                                                            % Pa
 
 t_vect = (t_init:t_step:t_final)';
 t_length = length(t_vect);
-%% Modos asumidos
 
-% Forma modal (se almacena en structs)
+%% Modos asumidos
 % psi_n = sin(n*pi*x/L)
 
-psis = struct();                                                            % Inicializar struct     
+% psis = struct();                                                            % Inicializar struct     
 psi = sym(zeros(1,cant_modos));
 for n = 1:cant_modos
-    nameVal = strcat('psi',string(n));                                      % Nombre de variable
-    psis.(nameVal) = sin(n*pi*x/L);                                         % Forma modal de cada modo
+%     nameVal = strcat('psi',string(n));                                      % Nombre de variable
+%     psis.(nameVal) = sin(n*pi*x/L);                                         % Forma modal de cada modo
     psi(n) = sin(n*pi*x/L);
 end
 
-% % fplot modos
+% % Graficar modos
 % figure
 % fplot(psi)
 % xlim([0 L])
@@ -127,11 +119,11 @@ ddpsi = diff(dpsi,x);
 % Me*ddq(t) + Ke*q(t) = Pe
 
 %% Matriz de masa equivalente
-% Me = Mviga
+% Me = Mviga (cinética ¿?)
 Me = double(int(rho_lin*A*(psi).'*psi,x,0,L));
 
 %% Matriz de rigidez equivalente
-% Energía potencial de deformación del puente (viga equivalente)
+% Por energía potencial de deformación del puente
 Ke = double(int(E*I*(ddpsi).'*ddpsi,x,0,L));
 
 %% Fuerza externa equivalente 
@@ -170,7 +162,7 @@ wn = sqrt(diag(lambda));
 Phi = eye(cant_modos);
 Ce = (Me*Phi)*diag(2*zrmodal.*wn./Me).*(Me*Phi).';    % Esto es C
 
-% Cmododal = Phi'*C*Phi                             % Esto es Cr
+% Cmododal = Phi'*C*Phi  (segunda forma)                           % Esto es Cr
 [Phi, lambda] = eig(Ke,Me);                                                 % Problema de valores y vectores propios
 Ce2 = (Me*Phi)*diag(2*zrmodal.*wn./Me).*(Me*Phi).';    % Esto es C
 
@@ -211,9 +203,9 @@ damp(modelo)
 % Cargar los valores de Pe_vect para la simulación
 % Fijarse en que tienen los valores de tiempo, Omega, L coherentes con los
 % que están en archivo Pe_vect_generator.m
-Pe_vect = [];
 
-Pe_vect_sim = [t_vect Pe_vect];
+Pe_vect = load(Pe_vect_data.mat);
+Pe_vect_sim = [t_vect Pe_vect.Pe_vect];
 % id est [0 Pe1 Pe2; 0.1 Pe1 Pe2; 0.2....];
 
 % Ejecutar simulación
@@ -222,7 +214,6 @@ out = sim('Bridge_simu_E0');                                                % Ej
 %% Desplazamientos
 % Discretizando 
 u_bridge = out.q.Data.*psi;
-% u_bridge = out.q.Data(:,1)*psi(1,1) + out.q.Data(:,2)*psi(1,2); % u(x,t) SIN TMD
 % [mdesp,ndesp] = size(u_bridge);                                           % mdesp = tiempos, ndesp = 1
 
 % Desplazamiento máximo
