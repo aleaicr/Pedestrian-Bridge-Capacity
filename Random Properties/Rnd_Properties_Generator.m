@@ -10,11 +10,21 @@ clear variables
 close all
 clc
 
-%% Peatones y grupos
+%% Inputs
 n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
 n_max = 40;
 n_step = 5;                                                                 % Cuantos peatones van en "cada peatón"/grupo
 
+mu_m = 80;  % kg                                                            % Media de la distribución de masa
+sigma_m = 15; % kg                                                          % Desviación estándar de la distribución de masa
+mu_v = 5; % km/h                                                            % Media
+sigma_v = 2; % km/h                                                         % Desviación estándar
+mu_freq = 1.8; % hz                                                         % Media                                                       
+sigma_freq = 0.8;  % hz                                                     % Desviación estándar
+Tadd_min = 0;
+Tadd_max = 10;
+
+%% Peatones y grupos
 peatones = (n_min:1:n_max)';
 grupos = ((n_min-1)+n_step:n_step:n_max)';                                 
 np = length(peatones);
@@ -30,64 +40,39 @@ fprintf('Cantidad de grupos = %.0f \n \n',ng)
 % Vamos a ver grupos o peatones?
 if n_step == 1
     group_or_ped = peatones;
+%     np = np;
 else
     group_or_ped = grupos;
+    np = ng;
 end
 
 %% Masa
-mu_m = 80;  % kg                                                            % Media de la distribución de masa
-sigma_m = 15; % kg                                                          % Desviación estándar de la distribución de masa
-
-if n_step == 1                                                              % Valores aleatorios de masa para 'n' peatones
-    m_vect = n_step*normrnd(mu_m,sigma_m,[np,1]);  
-else
-    m_vect = n_step*normrnd(mu_m,sigma_m,[ng,1]);  
-end
+m_vect = n_step*normrnd(mu_m,sigma_m,[np,1]);  
 
 %% Velocidad
-mu_v = 5; % km/h                                                            % Media
-sigma_v = 2; % km/h                                                         % Desviación estándar
-
-if n_step == 1                                                              % Vector
-    v_vect = normrnd(mu_v,sigma_v,[np,1]); 
-else
-    v_vect = normrnd(mu_v,sigma_v,[ng,1]); 
-end
+v_vect = normrnd(mu_v,sigma_v,[np,1]);
 
 %% Frecuencia caminar
-mu_freq = 1.8; % hz                                                         % Media                                                       
-sigma_freq = 0.8;  % hz                                                     % Desviación estándar
-
-if n_step == 1                                                              % Vector
-    freq_vect = normrnd(mu_freq,sigma_freq,[np,1]); 
-else
-    freq_vect = normrnd(mu_freq,sigma_freq,[ng,1]); 
-end
+freq_vect = normrnd(mu_freq,sigma_freq,[np,1]); 
 
 %% Tiempo para añadir
 % Tiempo que se demora para añadir al peatón i
-Tadd_min = 0;
-Tadd_max = 10;
-if n_step == 1
-    Taddvectprima = randi([Tadd_min,Tadd_max],[np-1,1]);
-else
-    Taddvectprima = randi([Tadd_min,Tadd_max],[ng-1,1]);
-end
+Taddvectprima = randi([Tadd_min,Tadd_max],[np-1,1]);
 Tadd_vect = [0;Taddvectprima];
 
 %% Lado para añadir
 % Desde que lado del puente entra la persona Lado 1 (x=0) o Lado 2 (x=L)
-if n_step == 1
-    side = randi([1,2],[np,1]);
-else
-    side = randi([1,2],[ng,1]);
-end
+side = randi([1,2],[np,1]);
+% if n_step == 1
+%     side = randi([1,2],[np,1]);
+% else
+%     side = randi([1,2],[ng,1]);
+% end
 
 %% Mostrar tabla
-
 tabla = table();
 if n_step == 1
-    tabla.Peatones = peatones;
+    tabla.Peaton = peatones;
 else
     tabla.Grupo = num_grupo;
 end
@@ -101,18 +86,17 @@ clear tabla
 
 %% Histogramas
 % Para verificar que siguen distribución normal
-figure
-hold on
-histogram(m_vect,'Normalization','pdf');
-histogram(v_vect,'Normalization','pdf');
-histogram(freq_vect,'Normalization','pdf');
-histogram(Tadd_vect,'Normalization','pdf');
-hold off
-grid on
-legend('Masa','Velocidad','Frecuencia','Tadd')
+% figure
+% hold on
+% histogram(m_vect,'Normalization','pdf');
+% histogram(v_vect,'Normalization','pdf');
+% histogram(freq_vect,'Normalization','pdf');
+% histogram(Tadd_vect,'Normalization','pdf');
+% hold off
+% grid on
+% legend('Masa','Velocidad','Frecuencia','Tadd')
 
 %% Figura Peatones en puente vs tiempo
-
 Tadd_cum = cumsum(Tadd_vect);
 figure
 if n_step == 1

@@ -94,9 +94,8 @@ damp(modelo)
 %% Simulación puente
 % Simulación del puente para la carga equivalente peatonal sinusoidal Pe
 
-% Cargar los valores de Pe_vect para la simulación
-% Fijarse en que tienen los valores de tiempo, Omega, L coherentes con los
-% que están en archivo Pe_vect_generator.m
+% Como el puente parte sin excitación, el vector Pe_vect solo son zeros
+% para cada peatón
 
 Pe_vect = [];
 Pe_vect_sim = [t_vect Pe_vect];
