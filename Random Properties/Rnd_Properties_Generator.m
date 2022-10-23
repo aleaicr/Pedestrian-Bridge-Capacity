@@ -13,7 +13,7 @@ clc
 %% Inputs
 n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
 n_max = 40;
-n_step = 5;                                                                 % Cuantos peatones van en "cada peatón"/grupo
+n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo
 
 mu_m = 80;  % kg                                                            % Media de la distribución de masa
 sigma_m = 15; % kg                                                          % Desviación estándar de la distribución de masa

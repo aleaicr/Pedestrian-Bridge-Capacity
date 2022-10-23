@@ -33,7 +33,7 @@ porc_P0 = 0.15; % Fhorizontal = 15%*Fvertical                               % Po
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
 Mpuente = rho_lin*L; % 50377.709 % kg                                       % Masa del puente                                
 xi = 1/100;
-cant_modos = 5;                                                             % Cantidad de modos de vibrar a considerar                         
+cant_modos = 3;                                                             % Cantidad de modos de vibrar a considerar                         
 zrmodal = xi*diag(ones(cant_modos));                                        % Vector
 
 syms x t                                                                    
@@ -57,20 +57,21 @@ t_length = length(t_vect);
 
 %% Modos asumidos
 % psi_n = sin(n*pi*x/L)
-
+psi_string = cell(cant_modos,1);
 psi = sym(zeros(1,cant_modos));
 for n = 1:cant_modos
+    psi_string{n} = string(sprintf("sin(%.0fpi*x/L)",n));
     psi(n) = sin(n*pi*x/L);
 end
 
-% % Graficar modos
-% figure
-% fplot(psi)
-% xlim([0 L])
-% legend(string(psi));
-% xlabel('Posición en puente [m]')
-% ylabel('Forma modal')
-% title('Formas Modales')
+% Graficar modos
+figure
+fplot(psi)
+xlim([0 L])
+legend(string(psi_string));
+xlabel('Posición en puente [m]')
+ylabel('Forma modal')
+title('Formas Modales')
 
 % Derivadas
 dpsi = diff(psi,x);
