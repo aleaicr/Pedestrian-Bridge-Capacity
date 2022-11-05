@@ -14,17 +14,17 @@ tic
 L = 144; % m                                                                % Largo del tramo del puente a analizar
 frec = 1.8; % hz                                                            % Frecuencia del caminar de personas
 Omega = 2*pi*frec/2; % rad/sec                                              % Frecuencia ircular del caminar de las personas
-Ppm = 5.6;  % personas/m                                                     % Personas por metro lineal
-Pv_singlePerson = 0.686; % kN/persona                                           % Fuerza Vertical del caminar
+Ppm = 15;  % personas/m                                                     % Personas por metro lineal
+Pv_singlePerson = 1; % kN/persona                                           % Fuerza Vertical del caminar
 Pv = Ppm*Pv_singlePerson; %kN/m                                             % Fuerza vertical por grupo de personas en un metro lineal
 porc_P0 = 0.15; % Fhorizontal = 5%*Fvertical                                % Porcentaje de la fuerza vertical que corresponde a la fuerza horizontal
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
-cant_modos = 2;                                                             % Cantidad de modos
+cant_modos = 5;                                                             % Cantidad de modos
 
 % Tiempo de simulación
 t_init = 0;                                                                 % Tiempo inicial de la simulación
-t_final = 40;                                                              % Tiempo final de la simulación
-t_step = 1/10;                                                            % Paso temporal de la simulación
+t_final = 30;                                                               % Tiempo final de la simulación
+t_step = 1/1000;                                                            % Paso temporal de la simulación
 
 t_vect = (t_init:t_step:t_final)';
 t_length = length(t_vect);
