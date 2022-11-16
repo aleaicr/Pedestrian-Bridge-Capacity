@@ -17,9 +17,8 @@ function [psi] = sinModalShapes(n_modos,L)
 
 psi = sym(zeros(1,n_modos));
 for n = 1:n_modos
-    psi(n) = sin(n*pi*x/L);
+    psi(n) = sin(n*pi*x/L);                                                 % Forma sinusoidal
 end
-
 
 end
 

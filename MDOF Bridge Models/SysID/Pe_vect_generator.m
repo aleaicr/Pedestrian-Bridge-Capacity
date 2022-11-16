@@ -19,12 +19,12 @@ Pv_singlePerson = 0.686; % kN/persona                                       % Fu
 Pv = Ppm*Pv_singlePerson; %kN/m                                             % Fuerza vertical por grupo de personas en un metro lineal
 porc_P0 = 0.2; % Fhorizontal = 5%*Fvertical                                 % Porcentaje de la fuerza vertical que corresponde a la fuerza horizontal
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
-cant_modos = 2;                                                             % Cantidad de modos
+cant_modos = 1;                                                             % Cantidad de modos
 
 % Tiempo de simulación
 t_init = 0;                                                                 % Tiempo inicial de la simulación
-t_final = 40;                                                              % Tiempo final de la simulación
-t_step = 1/10;                                                            % Paso temporal de la simulación
+t_final = 50;                                                              % Tiempo final de la simulación
+t_step = 1/100;                                                              % Paso temporal de la simulación
 
 t_vect = (t_init:t_step:t_final)';
 t_length = length(t_vect);

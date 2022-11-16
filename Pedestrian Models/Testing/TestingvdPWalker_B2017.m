@@ -11,8 +11,8 @@ clc
 
 %% Inputs
 ai = 1;
-wi = 2;
-lambdai = 1;
+wi = 0.75;
+lambdai = 0.23;
 omega_sinusoide = 2*pi*0.9;
 ampl_sinusoide = 1/20;
 

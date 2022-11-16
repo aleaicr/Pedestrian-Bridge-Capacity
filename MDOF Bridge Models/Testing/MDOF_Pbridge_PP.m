@@ -17,24 +17,24 @@ clc
 
 %% Imput del Modelo
 tic
-E = 430*10^3*10^3; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                        % Modulo de young del material del puente
-b = 4.5; % m                                                                % Ancho de losa de puente
-h = 1; % m                                                                  % Espesor de losa de puente
+E = 313*10^6; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                             % Modulo de young del material del puente, desde SysID
+b = 2.3816; % m                                                             % Ancho de losa de puente, desde SysID
+h = 0.318; % m                                                              % Espesor de losa de puente, desde SysID
+rho_vol = 4.2228; % kg/m3                                                   % Densidad volumétrica de masa del puente, desde SysID
 I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
 A = b*h; % m2                                                               % Area de la sección puente
-rho_vol = 1; % kg/m3                                                        % Densidad volumétrica del puente
 rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente
 L = 144; % m                                                                % Largo del tramo del puente a analizar
-frec = 1.8; % hz                                                            % Frecuencia con que una persona da un paso (izquierdo o derecho)
+frec = 1.8; % hz                                                            % Frecuencia con que una persona da un paso (izquierdo o derecho), source: Pachi & Ji 2004
 Omega = 2*pi*frec/2; % rad/sec                                              % Frecuencia circular del caminar de las personas (horizontal es la mitad de vertical)
-Ppm = 15;  % personas/m                                                     % Personas por metro lineal
-Pv_singlePerson = 1; % kN/persona                                           % Fuerza Vertical del caminar
+Ppm = 5.6;  % personas/m                                                    % Personas por metro lineal, source: Dallard P. et al 2001
+Pv_singlePerson = 0.686; % kN/persona                                       % Fuerza Vertical del caminar, persona de masa 70kg
 Pv = Ppm*Pv_singlePerson; %kN/m                                             % Fuerza vertical por grupo de personas en un metro lineal
 porc_P0 = 0.15; % Fhorizontal = 15%*Fvertical                               % Porcentaje de la fuerza vertical que corresponde a la fuerza horizontal
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
 Mpuente = rho_lin*L; % 50377.709 % kg                                       % Masa del puente                                
 cant_modos = 2;                                                             % Cantidad de modos de vibrar a considerar                         
-xi = 7/100;                                                                 % Razón de amortiguamiento (será igual para todos los modos)
+xi = 0.7/100;                                                                 % Razón de amortiguamiento (será igual para todos los modos), source: Dallard P. et al 2001
 zrmodal = xi*ones(cant_modos,1);                                            % Vector de razones de amortiguamiento para cada modo
 
 syms x t                                                                    
@@ -42,16 +42,16 @@ syms x t
 % x: posición para función de forma (0 < x < L)
 
 % Discretización del puente
-cant_particiones = 4;                                                      % Cantidad de particiones para discretizar el puente
-x_vals = 0:L/cant_particiones:L;                                            % Discretización del puente
+% cant_particiones = 4;                                                       % Cantidad de particiones para discretizar el puente
+x_vals = L/4:L/4:3*L/4;                                                     % Discretización del puente
 
 % Fuerzas peatonales
-P = Po*sin(Omega*t);                                                        % Carga horizontal distribuida en el puente
+P = 0;                                                                      % Carga horizontal distribuida en el puente
 
 % Parámetros simulaciones
 t_init = 0;                                                                 % Tiempo inicial de la simulación
-t_final = 30;                                                               % Tiempo final de la simulación
-t_step = 1/100;                                                             % Paso temporal de la simulación
+t_final = 50;                                                               % Tiempo final de la simulación
+t_step = 1/1000;                                                             % Paso temporal de la simulación
 
 t_vect = (t_init:t_step:t_final).';
 t_length = length(t_vect);
@@ -60,6 +60,7 @@ t_length = length(t_vect);
 % El puente no tiene excitación, tiene condiciones iniciales
 % x0 = [q1_0; q2_0; dq1_0; dq2_0]
 x0 = [1/20; 1/20; 0; 0];
+
 fprintf('\nCondiciones iniciales x0: \n')
 disp(x0)
 
@@ -84,7 +85,6 @@ end
 % % Derivadas
 % dpsi = diff(psi,x);
 % ddpsi = diff(dpsi,x);
-
 
 %% EDM Modos Asumidos
 % Aplicar método de modos asumidos a las propiedades de la viga equivalente
