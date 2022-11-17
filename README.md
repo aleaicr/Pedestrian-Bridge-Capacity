@@ -1,2 +1,2 @@
 # Pedestrian-Bridge-Capacity 
-Estimation of pedestrian bridges crowd capacity until dynamic instability
+Dynamic modeling of lateral vibrations in pedestrian bridges induced by crowd foot-forces and estimation of the probability of dynamic instability
