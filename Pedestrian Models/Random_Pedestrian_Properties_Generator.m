@@ -12,7 +12,7 @@ clc
 
 %% Inputs
 n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
-n_max = 50;
+n_max = 1;
 n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo
 
 mu_m = 80;  % kg                                                            % Media de la distribución de masa

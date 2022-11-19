@@ -1,0 +1,143 @@
+%% MDOF Pedestrian Bridge Model
+% Alexis Contreras R.
+% 03-11-2022
+
+% Este modelo no tiene ninguna excitación, pero tiene una condicion incial
+% de deformación del primer modo (coord. generalizada q1) para deformación,
+% es decir, considera el puente como una cuerda de guitarra y parte desde
+% una deformada de medio seno.
+
+% La simulación se realiza en archivo Bridge_simu_PP.slx
+
+%% Inicializar
+clear variables
+close all
+clc
+
+%% Imput del Modelo
+tic
+E = 313*10^6; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                             % Modulo de young del material del puente, desde SysID
+b = 2.3816; % m                                                             % Ancho de losa de puente, desde SysID
+h = 0.318; % m                                                              % Espesor de losa de puente, desde SysID
+rho_vol = 4.2228; % kg/m3                                                   % Densidad volumétrica de masa del puente, desde SysID
+I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
+A = b*h; % m2                                                               % Area de la sección puente
+rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente
+L = 144; % m                                                                % Largo del tramo del puente a analizar
+frec = 1.8; % hz                                                            % Frecuencia con que una persona da un paso (izquierdo o derecho), source: Pachi & Ji 2004
+Omega = 2*pi*frec/2; % rad/sec                                              % Frecuencia circular del caminar de las personas (horizontal es la mitad de vertical)
+Ppm = 5.6;  % personas/m                                                    % Personas por metro lineal, source: Dallard P. et al 2001
+Pv_singlePerson = 0.686; % kN/persona                                       % Fuerza Vertical del caminar, persona de masa 70kg
+Pv = Ppm*Pv_singlePerson; %kN/m                                             % Fuerza vertical por grupo de personas en un metro lineal
+porc_P0 = 0.15; % Fhorizontal = 15%*Fvertical                               % Porcentaje de la fuerza vertical que corresponde a la fuerza horizontal
+Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
+Mpuente = rho_lin*L; % 50377.709 % kg                                       % Masa del puente                                
+cant_modos = 2;                                                             % Cantidad de modos de vibrar a considerar                         
+xi = 0.7/100;                                                               % Razón de amortiguamiento (será igual para todos los modos), source: Dallard P. et al 2001
+zrmodal = xi*ones(cant_modos,1);                                            % Vector de razones de amortiguamiento para cada modo
+
+% zrmodal = [0.08; 0.06];
+
+syms x t                                                                    
+% viga -> E,rho,I,A,L
+% x: posición para función de forma (0 < x < L)
+
+% Discretización del puente
+% cant_particiones = 4;                                                       % Cantidad de particiones para discretizar el puente
+x_vals = L/4:L/4:3*L/4;                                                     % Discretización del puente
+
+% Fuerzas peatonales
+P = 0;                                                                      % Carga horizontal distribuida en el puente
+
+% Parámetros simulaciones
+t_init = 0;                                                                 % Tiempo inicial de la simulación
+t_final = 100;                                                               % Tiempo final de la simulación
+t_step = 1/10;                                                             % Paso temporal de la simulación
+
+t_vect = (t_init:t_step:t_final).';
+t_length = length(t_vect);
+
+% Condiciones iniciales para simulación
+% El puente no tiene excitación, tiene condiciones iniciales
+% x0 = [q1_0; q2_0; dq1_0; dq2_0]
+x0 = [1/20; 1/100; 0; 0];
+
+fprintf('\nCondiciones iniciales x0: \n')
+disp(x0)
+
+%% Modos asumidos
+% psi_n = sin(n*pi*x/L)
+% psi_string = cell(cant_modos,1);
+psi = sym(zeros(1,cant_modos));
+for n = 1:cant_modos
+%     psi_string{n} = string(sprintf("sin(%.0fpi*x/L)",n));
+    psi(n) = sin(n*pi*x/L);
+end
+
+% % Graficar modos
+% figure
+% fplot(psi)
+% xlim([0 L])
+% legend(string(psi_string));
+% xlabel('Posición en puente [m]')
+% ylabel('Forma modal')
+% title('Formas Modales')
+
+% % Derivadas
+% dpsi = diff(psi,x);
+% ddpsi = diff(dpsi,x);
+
+%% EDM Modos Asumidos
+% Aplicar método de modos asumidos a las propiedades de la viga equivalente
+% que genera la respuesta del puente en estudio
+% Me*ddq(t) + Ce*dq(t) Ke*q(t) = Ge*Pe
+[Me,Ke,Ce,Pe,Ge,wn] = assumedModes_beam(psi,E,I,rho_lin,A,L,zrmodal,P);
+
+%% Espacio Estado - Puente 
+% Modelo de viga equivalente queda representado en SpaceState
+[modelo,As,Bs,Cs,Ds] = SpaceState_bridge(cant_modos,Me,Ke,Ce,Ge);
+
+% Mostrar propiedades del modelo
+damp(modelo)
+
+%% Simulación puente
+% Simulación del puente para la carga equivalente peatonal sinusoidal Pe
+
+% Excitación
+% Sin excitación: Pe_vect = [t_vect zeros(t_length,cant_modos)];
+Pe_vect = [t_vect zeros(t_length,cant_modos)];
+
+% Ejecutar simulación
+out = sim('Bridge_simu_PP');                                                % Ejecución de modelo simulink para puente
+% outputs:
+% q: Coordenadas generalizadas q = [q1;q2;...;qcant_modos]
+
+%% Desplazamientos
+u_bridge = out.q.Data*psi.';                                                % Respuesta del tiempo en función de la posición discretizado para cada tiempo
+
+% Desplazamiento máximo
+% Buscamos desplazamiento máximo en el puente (primer modo en L/2, segundo
+% modo en L/4...) revisar cantidad de discretizaciones que se realizan.
+max_desp = 0;                                                               % Auxiliar
+for j = 1:length(x_vals)                                                    % Utilizando las particiones de x, determinamos el desplazamiento máximo del puente SIN TMD
+    desplpuente_en_x = max(double(subs(u_bridge,x,x_vals(j))));
+    if abs(desplpuente_en_x) > max_desp
+        max_desp = abs(desplpuente_en_x);                                   % Guardar desplazamiento máximo
+    end
+end
+
+%% Animación respuesta
+
+figure
+for i = 1:length(out.q.Data)
+    p = fplot(u_bridge(i,1));
+    axis([0 L -0.1 0.1])
+    legend(convertStringsToChars("T = " + string(t_vect(i))));
+    pause(0.000001)
+    grid on
+    exportgraphics(gca,"InitialConditions_animation.gif","Append",true)
+end
+
+
+fprintf('El desplazamiento máximo que experimenta el puente es despl_max = %.2f metros (%.2f cm)\n',max_desp,max_desp*100)
+fprintf('El último desplazamiento en L/2 es: %.2f\n ', double(subs(u_bridge(end),L/2)));

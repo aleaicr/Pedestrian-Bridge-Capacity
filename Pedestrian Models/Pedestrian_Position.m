@@ -76,4 +76,6 @@ for tk = 1:t_length
     grid on
     axis([0 L -1 pd_length+1])
     pause(0.01)
+    legend(convertStringsToChars("T = " + string(t_vect(tk))));
+    exportgraphics(gca,"Ped_Posi_Animotion2.gif","Append",true)
 end

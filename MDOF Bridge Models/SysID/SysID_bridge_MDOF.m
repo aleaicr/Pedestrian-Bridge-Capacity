@@ -13,14 +13,14 @@ clc
 
 %% Inputs
 % Rango
-E_min = 200*10^3*10^3;
-E_max = 550*10^3*10^3;
-b_min = 1;
-b_max = 10;
-h_min = 0.01;
-h_max = 2;
-rho_vol_min = 1;
-rho_vol_max = 10;
+E_min = 200*10^3*10^3;  % kN/m2
+E_max = 550*10^3*10^3;  % kN/m2
+b_min = 1;              % m
+b_max = 10;             % m
+h_min = 0.01;           % m
+h_max = 2;              % m
+rho_vol_min = 1;        % kg/m3
+rho_vol_max = 10;       % kg/m3
 
 % Objetivos
 omega_obj = 3.14; % rad/seg

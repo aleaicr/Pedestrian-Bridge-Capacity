@@ -54,14 +54,12 @@ t_vect = (t_init:t_step:t_final)';
 t_length = length(t_vect);
 
 % Condiciones iniciales para simulación
-% El puente no tiene excitación, tiene condiciones iniciales
+% Si El puente no tiene excitación pero tiene condiciones iniciales
 % x0 = [q1_0; q2_0; dq1_0; dq2_0], son los estados
 % x0 = [1/20; 1/20; 0; 0];
 x0 = 0;                                                                     % Reposo
 
 %% Modos asumidos
-% psi_n = sin(n*pi*x/L)
-% psi_string = cell(cant_modos,1);
 psi = sym(zeros(1,cant_modos));
 for n = 1:cant_modos
 %     psi_string{n} = string(sprintf("sin(%.0fpi*x/L)",n));
@@ -108,7 +106,6 @@ out = sim('Bridge_simu');                                                   % Ej
 %% Desplazamientos
 % Discretizando 
 u_bridge = out.q.Data*psi.';
-% [mdesp,ndesp] = size(u_bridge);                                           % mdesp = tiempos, ndesp = 1
 
 % Desplazamiento máximo
 max_desp = 0;
