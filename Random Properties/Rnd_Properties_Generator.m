@@ -12,17 +12,17 @@ clc
 
 %% Inputs
 n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
-n_max = 40;
+n_max = 200;
 n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo
 
-mu_m = 80;  % kg                                                            % Media de la distribución de masa
-sigma_m = 15; % kg                                                          % Desviación estándar de la distribución de masa
-mu_v = 5; % km/h                                                            % Media
-sigma_v = 2; % km/h                                                         % Desviación estándar
+mu_m = 71.91;  % kg                                                            % Media de la distribución de masa
+sigma_m = 14.89; % kg                                                          % Desviación estándar de la distribución de masa
+mu_v = 1.3; % m/s                                                            % Media
+sigma_v = 0.13; % m/s                                                         % Desviación estándar
 mu_freq = 1.8; % hz                                                         % Media                                                       
-sigma_freq = 0.8;  % hz                                                     % Desviación estándar
+sigma_freq = 0.11;  % hz                                                     % Desviación estándar
 Tadd_min = 0;
-Tadd_max = 10;
+Tadd_max = 20;
 
 %% Peatones y grupos
 peatones = (n_min:1:n_max)';
@@ -63,11 +63,6 @@ Tadd_vect = [0;Taddvectprima];
 %% Lado para añadir
 % Desde que lado del puente entra la persona Lado 1 (x=0) o Lado 2 (x=L)
 side = randi([1,2],[np,1]);
-% if n_step == 1
-%     side = randi([1,2],[np,1]);
-% else
-%     side = randi([1,2],[ng,1]);
-% end
 
 %% Mostrar tabla
 tabla = table();
@@ -95,6 +90,63 @@ clear tabla
 % hold off
 % grid on
 % legend('Masa','Velocidad','Frecuencia','Tadd')
+
+% Masa
+figure
+histogram(m_vect,[30;40;50;60;70;80;90;100;110;120],'Normalization','pdf')
+grid on
+legend('Masa')
+title('Distribución de masa normalizada(pdf)', 'Johnson et al 2008')
+xlabel('Masa [kg]')
+ylabel('pdf')
+
+% frecuencia
+figure
+histogram(freq_vect,'Normalization','pdf')
+grid on
+legend('Frecuencia')
+title('Distribución de frecuencia normalizada(pdf)', 'Pachi et al 2005')
+xlabel('Frecuencia [hz]')
+ylabel('pdf')
+
+% velocidad
+figure
+histogram(v_vect,'Normalization','pdf')
+grid on
+legend('Velocidad')
+title('Distribución de velocidad normalizada(pdf)', 'Pachi et al 2005')
+xlabel('Velocidad [m/s]')
+ylabel('pdf')
+
+% frecuencia vs velocidad
+figure
+plot(freq_vect,v_vect,'o')
+grid on
+title('Correlación frecuencia y velocidad')
+xlabel('Frecuencia [hz]')
+ylabel('Velocidad [m/s]')
+xlim([0 2.7])
+ylim([0 2.7])
+
+figure
+subplot(1,3,1)
+histogram(m_vect,[30;40;50;60;70;80;90;100;110;120],'Normalization','probability')
+xlabel('Masa [kg]')
+title('Johnson et al 2008')
+grid on
+
+subplot(1,3,2)
+histogram(v_vect,'Normalization','probability')
+title('Pachi et al 2005')
+xlabel('Velocidad [m/s]')
+grid on
+
+subplot(1,3,3)
+histogram(freq_vect,'Normalization','probability')
+title('Pachi et al 2005')
+xlabel('Frecuencia [hz]')
+sgtitle('Distribuciones normalizadas (pdf)')
+grid on
 
 %% Figura Peatones en puente vs tiempo
 Tadd_cum = cumsum(Tadd_vect);
@@ -133,5 +185,5 @@ clear matObj
 
 %% Solo Load
 % Dejamos solo las variables que nos importan
-clear variables
-load('rnd_pedestrian_properties.mat')
+% clear variables
+% load('rnd_pedestrian_properties.mat')

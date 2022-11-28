@@ -7,7 +7,8 @@ function [As,Bs,Cs,Ds] = SpaceState_bridge_alternative(n_modos,Me,Ke,Ce,Ge,alter
 % La ecuación de respuesta retorna todos los estados (desplazamiento,
 % velocidad y aceleración)
 
-%'d''v','a','dv','da','va','dva'
+% Alternative: 'd''v','a','dv','da','va','dva', puedo obtener de la
+% respuesta lo que yo quiera
 
 %%
 % Inputs
@@ -31,12 +32,28 @@ Bs = [zeros(n_modos); Me\Ge];                                               % Ma
 
 % Ecuacion de Respuesta 
 % y = Cs*x + Ds*p(t), donde y = [q1(t); q2(t)], solo desplazamientos
+alternative = sort(alternative);
 if isequal(alternative,'d')
     Cs = [eye(n_modos) zeros(n_modos)];                                         % Matriz de estados, 6x4
     Ds = zeros(n_modos);                                                        % Matriz de influencia de excitacion pe1(t), 6x1
 elseif isequal(alternative,'v')
     Cs = [zeros(n_modos) eye(n_modos)];                                         % Matriz de estados, 6x4
     Ds = zeros(n_modos);
+elseif isequal(alternative,'a')
+    Cs = [-Me\Ke -Me\Ce];
+    Ds = Me/Ge;
+elseif isequal(alternative,'dv')
+    Cs = [eye(n_modos) zeros(n_modos); zeros(n_modos) eye(n_modos)];
+    Ds = [zeros(n_modos); zeros(n_modos)];
+elseif isequal(alternative,'ad')
+    Cs = [eye(n_modos) zeros(n_modos); -Me\Ke -Me\Ce];
+    Ds = [zeros(n_modos); Me\Ge];
+elseif isequal(alternative,'av')
+    Cs = [zeros(n_modos) eye(n_modos); -Me\Ke -Me\Ce];
+    Ds = [zeros(n_modos); Me\Ge];
+elseif isequal(alternative,'adv')
+    Cs = [eye(n_modos) zeros(n_modos); zeros(n_modos) eye(n_modos); -Me\Ke -Me\Ce];
+    Ds = [zeros(n_modos); zeros(n_modos); Me\Ge];
 end
 end
 

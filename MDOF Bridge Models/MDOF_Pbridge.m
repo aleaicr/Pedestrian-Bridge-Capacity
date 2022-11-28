@@ -16,10 +16,10 @@ clc
 
 %% Imput del Modelo
 tic
-E = 313*10^6; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                             % Modulo de young del material del puente, desde SysID
-b = 2.3816; % m                                                             % Ancho de losa de puente, desde SysID
-h = 0.318; % m                                                              % Espesor de losa de puente, desde SysID
-rho_vol = 4.2228; % kg/m3                                                   % Densidad volumétrica de masa del puente, desde SysID
+E = 4.9379*10^8; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                             % Modulo de young del material del puente, desde SysID
+b = 1.9955; % m                                                             % Ancho de losa de puente, desde SysID
+h = 0.32905; % m                                                              % Espesor de losa de puente, desde SysID
+rho_vol = 5.667; % kg/m3                                                   % Densidad volumétrica de masa del puente, desde SysID
 I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
 A = b*h; % m2                                                               % Area de la sección puente
 rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente

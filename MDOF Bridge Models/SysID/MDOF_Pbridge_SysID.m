@@ -24,8 +24,10 @@ rho_lin = rho_vol*A; % kg/m                                                 % De
 
 %% Espacio Estado - Puente 
 % Modelo de viga equivalente queda representado en SpaceState
-[As,Bs,Cs,Ds] = SpaceState_bridge_DisplOnly(cant_modos,Me,Ke,Ce,Ge);
+alternative = 'da';                                                         % vector de respuesta y contiene q y qpp
+[As,Bs,Cs,Ds] = SpaceState_bridge_alternative(cant_modos,Me,Ke,Ce,Ge,'da');
 modelo = ss(As,Bs,Cs,Ds);
+
 %% Simulación puente
 % Simulación del puente para la carga equivalente peatonal sinusoidal Pe
 
@@ -43,4 +45,5 @@ out = sim('Bridge_simu_SysID');                                             % Ej
 % como la forma modal psi_1(L/2) es 1, entonces el desplazamiento en metros
 % no es máx que q_1(t), se busca el máximo en el tiempo no mas
 
-max_desp = max(out.q.Data);
+max_desp = max(out.y.Data(:,1));
+max_acc = max(out.y.Data(:,2));

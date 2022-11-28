@@ -16,10 +16,10 @@ clc
 
 %% Imput del Modelo
 tic
-E = 313*10^6; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                             % Modulo de young del material del puente, desde SysID
-b = 2.3816; % m                                                             % Ancho de losa de puente, desde SysID
-h = 0.318; % m                                                              % Espesor de losa de puente, desde SysID
-rho_vol = 4.2228; % kg/m3                                                   % Densidad volumétrica de masa del puente, desde SysID
+E = 4.9379*10^8; % kN/m2                                                    % Modulo de young del material del puente, desde SysID
+b = 1.9955; % m                                                             % Ancho de losa de puente, desde SysID
+h = 0.32905; % m                                                            % Espesor de losa de puente, desde SysID
+rho_vol = 5.667; % kg/m3                                                    % Densidad volumétrica de masa del puente, desde SysID
 I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
 A = b*h; % m2                                                               % Area de la sección puente
 rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente
@@ -28,10 +28,10 @@ frec = 1.8; % hz                                                            % Fr
 Omega = 2*pi*frec/2; % rad/sec                                              % Frecuencia circular del caminar de las personas (horizontal es la mitad de vertical)
 Ppm = 5.6;  % personas/m                                                    % Personas por metro lineal, source: Dallard P. et al 2001
 Pv_singlePerson = 0.686; % kN/persona                                       % Fuerza Vertical del caminar, persona de masa 70kg
-Pv = Ppm*Pv_singlePerson; %kN/m                                             % Fuerza vertical por grupo de personas en un metro lineal
+Pv = Ppm*Pv_singlePerson; % kN/m                                            % Fuerza vertical por grupo de personas en un metro lineal
 porc_P0 = 0.15; % Fhorizontal = 15%*Fvertical                               % Porcentaje de la fuerza vertical que corresponde a la fuerza horizontal
 Po = porc_P0*Pv; % kN/m                                                     % Fuerza horizontal aplicada por las personas
-Mpuente = rho_lin*L; % 50377.709 % kg                                       % Masa del puente                                
+Mpuente = rho_lin*L; % kg                                                   % Masa del puente                                
 cant_modos = 2;                                                             % Cantidad de modos de vibrar a considerar                         
 xi = 0.7/100;                                                               % Razón de amortiguamiento (será igual para todos los modos), source: Dallard P. et al 2001
 zrmodal = xi*ones(cant_modos,1);                                            % Vector de razones de amortiguamiento para cada modo
@@ -126,17 +126,37 @@ for j = 1:length(x_vals)                                                    % Ut
     end
 end
 
-%% Animación respuesta
+figure
+plot(t_vect,out.q.Data(:,1))
+hold on
+plot(t_vect,out.q.Data(:,2))
+xlabel('Tiempo (t) [sec]')
+ylabel('q "[cm]"')
+title('Respuesta de la coordenada generalizada')
+legend('q1','q2')
+grid on
 
 figure
-for i = 1:length(out.q.Data)
-    p = fplot(u_bridge(i,1));
-    axis([0 L -0.1 0.1])
-    legend(convertStringsToChars("T = " + string(t_vect(i))));
-    pause(0.000001)
-    grid on
-    exportgraphics(gca,"InitialConditions_animation.gif","Append",true)
-end
+plot(t_vect,subs(u_bridge,x,L/2))
+hold on
+plot(t_vect,subs(u_bridge,x,L/4))
+xlabel('Tiempo (t) [sec]')
+ylabel('Desplazamiento [cm]')
+title('Respuesta de la coordenada física')
+legend('y(L/2,t)','y(L/4,t)')
+grid on
+
+%% Animación respuesta
+
+% figure
+% for i = 1:length(out.q.Data)
+%     p = fplot(u_bridge(i,1));
+%     axis([0 L -0.1 0.1])
+%     legend(convertStringsToChars("T = " + string(t_vect(i))));
+%     pause(0.000001)
+%     grid on
+%     exportgraphics(gca,"InitialConditions_animation.gif","Append",true)
+% end
 
 
 fprintf('El desplazamiento máximo que experimenta el puente es despl_max = %.2f metros (%.2f cm)\n',max_desp,max_desp*100)
