@@ -13,12 +13,12 @@ clc
 
 %% Inputs
 % Rango
-E_min = 3.5*10^8;   % kN/m2
+E_min = 3*10^8;   % kN/m2
 E_max = 5.5*10^8;  % kN/m2
 b_min = 1;            % m
-b_max = 3;             % m
+b_max = 10;             % m
 h_min = 0.1;           % m
-h_max = 0.5;              % m
+h_max = 1;              % m
 rho_vol_min = 1;        % kg/m3
 rho_vol_max = 7;       % kg/m3
 % w = sqrt(48*E*I/L^3/(rho_lin*L))
@@ -27,11 +27,11 @@ rho_vol_max = 7;       % kg/m3
 
 % Objetivos
 omega_obj = 3.14;       % rad/seg
-error_omega = 0.3;
-displ_obj = 0.05;       % 5 cm = 0.05 m 
-error_disp = 0.03;
+error_omega = 0.03;
+% displ_obj = 0.05;       % 5 cm = 0.05 m 
+% error_disp = 0.03;
 acc_obj = 225*10^-3*9.81; % m/s2 (dallard et al 2001)
-error_acc = 0.6;
+error_acc = 0.2;
 
 % Iniciar
 omega = 0;
@@ -60,7 +60,7 @@ x_vals = L/2;                                                               % Di
 
 % Parámetros simulaciones
 t_init = 0;                                                                 % Tiempo inicial de la simulación
-t_final = 8;                                                                % Tiempo final de la simulación
+t_final = 30;                                                                % Tiempo final de la simulación
 t_step = 1/20;                                                              % Paso temporal de la simulación
 
 t_vect = (t_init:t_step:t_final)';
@@ -98,7 +98,10 @@ for i = 1:count_limit
     displ = max_desp;   % m
     acc = max_acc; % m/s2
     fprintf('iteración %.0f; omega %.2f rad/s; displ %.2f cm , acc = %.2f [mili - g] \n\n',iter,omega,displ*100, acc*10^3/9.81)
-    if and(abs(omega - omega_obj) < error_omega, and(abs(displ - displ_obj) < error_disp, abs(acc - acc_obj) < error_acc))
+%     if and(abs(omega - omega_obj) < error_omega, and(abs(displ - displ_obj) < error_disp, abs(acc - acc_obj) < error_acc))
+%         break
+%     end
+    if and(abs(omega - omega_obj) < error_omega,  abs(acc - acc_obj) < error_acc)
         break
     end
 end

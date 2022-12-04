@@ -16,7 +16,7 @@ fi = 1.8/2;                           % hz                                  % Fr
 wi = 2*pi*fi;                         % rad/sec                             % 
 % wi = 1.2;    % autor
 lambdai = 0.5;                                                              % 
-mi = 50*70;                                                                    % kg
+mi = 70;                                                                    % kg
 
 % Pedestrian 2
 ai2 = 0.7;                                                                     %
@@ -24,7 +24,7 @@ fi2 = 1.5/2;                           % hz                                  % F
 wi2 = 2*pi*fi;                         % rad/sec                             % 
 % wi = 1.2;    % autor
 lambdai2 = 0.3;                                                              % 
-mi2 = 100*90;                                                                    % kg
+mi2 = 90;                                                                    % kg
 
 % Bridge (Marcheggiani & Lenci 2010) % Malos, no cumple ni con frecuencia
 % ni amortiguamiento del puente de análisis.
@@ -66,6 +66,62 @@ modelo
 
 % Simulación Impulso
 t_inicial = 0;
-t_step = 1/1000;
-t_final = 500;
-t_vect = (t_inicial:t_step:t_final)';
+t_step = 1/100;
+% t_final = 500;
+% t_vect = (t_inicial:t_step:t_final)';
+
+
+%% Cambiando la masa del peatón
+% Figura solo posición chart
+x0_chart = 0;
+x0_1 = 0.2;
+x0_2 = 0.1;
+t_final = 400;
+
+figure
+x0_ped = 0.1;
+out = sim('ImpulseSDOF_2Pedestrian_sim');
+plot(out.tout,out.simout.Data(:,1))
+hold on
+plot(out.tout,out.simout.Data(:,2))
+hold off
+%     plot(out.tout,out.simout.Data(:,1),'color',convertStringsToChars(colors_ped(i)))
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+legend('x0_1 = 0.08','x0_2 = 0.1')
+title('Simulación 2 peatones sobre carro')
+
+figure
+plot(out.tout,out.simout.Data(:,3))
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+legend('x0_1 = 0.08','x0_2 = 0.1')
+title('Simulación 2 peatones sobre carro')
+
+
+
+% figure
+% x0_ped = 0.1;
+% out = sim('ImpulseSDOF_2Pedestrian_sim');
+% plot(out.tout,envelope(out.simout.Data(:,1),500,'peak'))
+% data_peaton_1 = out.simout.Data(:,1);
+% hold on
+% plot(out.tout,envelope(out.simout.Data(:,2),500,'peak'))
+% hold off
+% %     plot(out.tout,out.simout.Data(:,1),'color',convertStringsToChars(colors_ped(i)))
+% xlabel('Tiempo [sec]')
+% ylabel('Desplazamiento peatón[m]')
+% grid on
+% legend('x0_1 = 0.08','x0_2 = 0.1')
+% title('Simulación 2 peatones sobre carro')
+% 
+% figure
+% plot(out.tout,envelope(out.simout.Data(:,3),500,'peak'))
+% xlabel('Tiempo [sec]')
+% ylabel('Desplazamiento peatón[m]')
+% grid on
+% legend('x0_1 = 0.08','x0_2 = 0.1')
+% title('Simulación 2 peatones sobre carro')
+
