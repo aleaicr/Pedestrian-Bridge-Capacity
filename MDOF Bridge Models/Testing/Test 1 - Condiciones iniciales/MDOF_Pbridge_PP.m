@@ -16,10 +16,10 @@ clc
 
 %% Imput del Modelo
 tic
-E = 4.9379*10^8; % kN/m2                                                    % Modulo de young del material del puente, desde SysID
-b = 1.9955; % m                                                             % Ancho de losa de puente, desde SysID
-h = 0.32905; % m                                                            % Espesor de losa de puente, desde SysID
-rho_vol = 5.667; % kg/m3                                                    % Densidad volumétrica de masa del puente, desde SysID
+E = 4.2104*10^8; % kN/m2                                                    % Modulo de young del material del puente, desde SysID
+b = 1.2644; % m                                                             % Ancho de losa de puente, desde SysID
+h = 0.153995; % m                                                            % Espesor de losa de puente, desde SysID
+rho_vol = 6.6102; % kg/m3                                                    % Densidad volumétrica de masa del puente, desde SysID
 I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
 A = b*h; % m2                                                               % Area de la sección puente
 rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente
@@ -148,15 +148,15 @@ grid on
 
 %% Animación respuesta
 
-% figure
-% for i = 1:length(out.q.Data)
-%     p = fplot(u_bridge(i,1));
-%     axis([0 L -0.1 0.1])
-%     legend(convertStringsToChars("T = " + string(t_vect(i))));
-%     pause(0.000001)
-%     grid on
-%     exportgraphics(gca,"InitialConditions_animation.gif","Append",true)
-% end
+figure
+for i = 1:length(out.q.Data)
+    p = fplot(u_bridge(i,1));
+    axis([0 L -0.1 0.1])
+    legend(convertStringsToChars("T = " + string(t_vect(i))));
+    pause(0.000001)
+    grid on
+    exportgraphics(gca,"InitialConditions_animation.gif","Append",true)
+end
 
 
 fprintf('El desplazamiento máximo que experimenta el puente es despl_max = %.2f metros (%.2f cm)\n',max_desp,max_desp*100)

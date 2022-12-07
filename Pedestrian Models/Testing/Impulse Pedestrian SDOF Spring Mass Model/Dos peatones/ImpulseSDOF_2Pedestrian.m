@@ -16,7 +16,7 @@ fi = 1.8/2;                           % hz                                  % Fr
 wi = 2*pi*fi;                         % rad/sec                             % 
 % wi = 1.2;    % autor
 lambdai = 0.5;                                                              % 
-mi = 70;                                                                    % kg
+mi = 80*70;                                                                    % kg
 
 % Pedestrian 2
 ai2 = 0.7;                                                                     %
@@ -24,7 +24,7 @@ fi2 = 1.5/2;                           % hz                                  % F
 wi2 = 2*pi*fi;                         % rad/sec                             % 
 % wi = 1.2;    % autor
 lambdai2 = 0.3;                                                              % 
-mi2 = 90;                                                                    % kg
+mi2 = 90*90;                                                                    % kg
 
 % Bridge (Marcheggiani & Lenci 2010) % Malos, no cumple ni con frecuencia
 % ni amortiguamiento del puente de análisis.
@@ -70,8 +70,63 @@ t_step = 1/100;
 % t_final = 500;
 % t_vect = (t_inicial:t_step:t_final)';
 
+%% 5cm a chart comparar sin peatones y con peatones
+% mi1 = 0;
+% mi2 = 0;
+x0_1 = 0;
+x0_2 = 0;
+x0_chart = 0.05;
+t_final = 400;
 
-%% Cambiando la masa del peatón
+figure
+out = sim('ImpulseSDOF_2Pedestrian_sim');
+plot(out.tout,out.simout.Data(:,1))
+hold on
+plot(out.tout,out.simout.Data(:,2))
+hold off
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+legend('x0_1 = 0.08','x0_2 = 0.1')
+title('Simulación 2 peatones sobre carro')
+
+figure
+plot(out.tout,out.simout.Data(:,3))
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+legend('Desplazamiento puente')
+title('Simulación 2 peatones sobre carro')
+
+
+%% Cambaidno condición inicial puente
+figure
+x0_chart = 0.1;
+x0_1 = 0;
+x0_2 = 0;
+t_final = 400;
+
+figure
+out = sim('ImpulseSDOF_2Pedestrian_sim');
+plot(out.tout,out.simout.Data(:,1))
+hold on
+plot(out.tout,out.simout.Data(:,2))
+hold off
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+title('Simulación 2 peatones sobre carro')
+
+figure
+plot(out.tout,out.simout.Data(:,3))
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón[m]')
+grid on
+legend('Desplazamiento puente')
+title('Simulación 2 peatones sobre carro')
+
+
+%% Cambiando condición inicial peatón
 % Figura solo posición chart
 x0_chart = 0;
 x0_1 = 0.2;
@@ -97,7 +152,7 @@ plot(out.tout,out.simout.Data(:,3))
 xlabel('Tiempo [sec]')
 ylabel('Desplazamiento peatón[m]')
 grid on
-legend('x0_1 = 0.08','x0_2 = 0.1')
+legend('Desplazamiento puente')
 title('Simulación 2 peatones sobre carro')
 
 

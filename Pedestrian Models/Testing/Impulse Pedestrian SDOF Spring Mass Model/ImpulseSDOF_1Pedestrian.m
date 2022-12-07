@@ -73,7 +73,7 @@ x0_chart = [0;0];
 colors_chart = ["#00290b";"#000dd6";"#008023";"#00ad2f";"#00de3c"];
 colors_ped = ["#000440";"#000887";"#000dd6";"#0069d1";"#02b2ed"];
 
-%% Condición inicial carro sin peatón
+%% Condición carro 
 x0_ped = 0;
 x0_chart = [0.05; 0];
 mi = 0;
@@ -119,6 +119,51 @@ grid on
 %% Variando condición inicial carro
 x0_ped = 0;
 figure
+mi = 70;
+x0_chart = [0.05; 0];
+t_final = 600;
+out = sim('ImpulseSDOF_1Pedestrian_sim.slx');
+plot(out.tout,envelope(out.simout.Data(:,2),500,'peak'))
+data_ped_1 = out.simout.Data(:,1);
+hold on
+x0_chart = [0.07; 0];
+out = sim('ImpulseSDOF_1Pedestrian_sim.slx');
+plot(out.tout,envelope(out.simout.Data(:,2),500,'peak'))
+data_ped_2 = out.simout.Data(:,1);
+
+x0_chart = [0.1; 0];
+out = sim('ImpulseSDOF_1Pedestrian_sim.slx');
+plot(out.tout,envelope(out.simout.Data(:,2),500,'peak'))
+data_ped_3 = out.simout.Data(:,1);
+
+x0_chart = [0.15; 0];
+out = sim('ImpulseSDOF_1Pedestrian_sim.slx');
+plot(out.tout,envelope(out.simout.Data(:,2),500,'peak'))
+data_ped_4 = out.simout.Data(:,1);
+hold off
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento puente [m]')
+legend('x0 = 0.05','x0 = 0.07', 'x0 = 0.1', 'x0 = 0.15')
+title('Respuesta carro + 1 peatón','Variando condición inicial carro')
+
+
+figure
+plot(out.tout, envelope(data_ped_1,50,'peak'))
+hold on
+plot(out.tout, envelope(data_ped_2,50,'peak'))
+plot(out.tout, envelope(data_ped_3,50,'peak'))
+plot(out.tout, envelope(data_ped_4,50,'peak'))
+hold off
+xlabel('Tiempo [sec]')
+ylabel('Desplazamiento peatón [m]')
+legend('x0 = 0.05','x0 = 0.07', 'x0 = 0.1', 'x0 = 0.15')
+title('Respuesta carro + 1 peatón','Variando condición inicial carro')
+grid on
+
+%% Variando condición inicial carro
+x0_ped = 0;
+figure
+mi = 500*70;
 x0_chart = [0.05; 0];
 t_final = 600;
 out = sim('ImpulseSDOF_1Pedestrian_sim.slx');
