@@ -14,9 +14,12 @@ function [psi] = sinModalShapes(n_modos,L)
 % Outputs
 % psi               -> Vector de sym con formas modales sinusoidales
 %%
+syms x
 psi = sym(zeros(1,n_modos));
 for n = 1:n_modos
     psi(n) = sin(n*pi*x/L);
 end
+
+
 end
 

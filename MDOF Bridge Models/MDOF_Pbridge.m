@@ -105,7 +105,7 @@ out = sim('Bridge_simu');                                                   % Ej
 
 %% Desplazamientos
 % Discretizando 
-u_bridge = out.q.Data*psi.';
+u_bridge = sum(out.q.Data*psi.',2);                                                % Malo, porq hay que sumar los modos
 
 % Desplazamiento máximo
 max_desp = 0;

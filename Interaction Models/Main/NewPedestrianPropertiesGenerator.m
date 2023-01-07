@@ -8,37 +8,47 @@ clear variables
 close all
 clc
 
- %% Inputs
-% Dejar INPUTS en el script Continuo
+%% Inputs
+% Dejar INPUTS en el script ContinuosBeamAndPedestrian
 
- % n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
-% n_max = 20;                                                                 % Cantidad máxima de peatones
-% n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo (fijar como 1, no se puede juntar con lel modelo de Belykh et al 2017
-% 
-% mu_m = 71.81;  % kg                                                         % Media de la distribución de masa
-% sigma_m = 14.89; % kg                                                       % Desviación estándar de la distribución de masa
-% 
-% mu_v = 1.3; % m/s                                                           % Media
-% sigma_v = 0.13; % m/                                                        % Desviación estándar
-% 
-% mu_w = 1.8; % rad/sec                                                       % Media
-% sigma_w = 0.2; % rad/sec                                                    % Desviación estándar
-% 
-% mu_freq = 1.8; % hz                                                         % Media                                                       
-% sigma_freq = 0.11;  % hz                                                    % Desviación estándar
-% 
-% Tadd_min = 0; % sec                                                         % Tiempo de añadir mínimo
-% Tadd_max = 5; % sec                                                         % Tiempo de añadir máximo (que espera el peatón i para incorporarse)
-% 
-% L = 144; % m                                                                % Longitud del puente
-% 
-% % Tiempo de simulación
-% t_inicial = 0;                                                              % Tiempo inicial de simulación
-% t_step = 1/1000;                                                            % Paso temporal de simulación
-% t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
-% 
-% t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
-% t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
+% Cantidad de peatones
+n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
+n_max = 20;                                                                 % Cantidad máxima de peatones
+n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo (fijar como 1, no se puede juntar con lel modelo de Belykh et al 2017
+
+% Propiedades puentes (para calcular tiempo de incorporación)
+L = 144; % m                                                                % Longitud del puente
+
+% Distribución normal Masa (Johnson et al 2008)
+mu_m = 71.81;  % kg                                                         % Media de la distribución de masa
+sigma_m = 14.89; % kg                                                       % Desviación estándar de la distribución de masa
+
+% Distribución normal Velocidad (Pachi & Ji, 2005)
+mu_v = 1.3; % m/s                                                           % Media
+sigma_v = 0.13; % m/                                                        % Desviación estándar
+
+% Distribución normal Frecuencia (Pachi & Ji 2005)
+mu_freq = 1.8; % hz                                                         % Media                                                       
+sigma_freq = 0.11;  % hz                                                    % Desviación estándar
+
+% Distribución normal Propiedades de Modelo de Belykh et al 2017
+% ai
+mu_ai = 1;
+sigma_si = 0.1;
+% lambda_i
+mu_lambdai = 1;
+sigma_lambdai = 0.1;
+
+% Tiempo de incorporación
+Tadd_min = 0; % sec                                                         % Tiempo de añadir mínimo
+Tadd_max = 5; % sec                                                         % Tiempo de añadir máximo (que espera el peatón i para incorporarse)
+
+% Tiempo de simulación
+t_inicial = 0;                                                              % Tiempo inicial de simulación
+t_step = 1/1000;                                                            % Paso temporal de simulación
+t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
+t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
+t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
 
 %% Generación de data
 % m_i: masa del peatón i
@@ -77,8 +87,10 @@ m_vect = normrnd(mu_m,sigma_m,[np,1]);                                      % Di
 v_vect = normrnd(mu_v,sigma_v,[np,1]);                                      % Distribución normal
 
 % Frecuencia
-freq_vect = normrnd(mu_w,sigma_w,[np,1]); % hz                              % Distribución normal
-w_vect = 2*pi*freq_vect; % rad/sec
+freq_vect = normrnd(mu_freq,sigma_freq,[np,1]); % hz                              % Distribución normal
+w_vect = 2*pi*freq_vect; % rad/sec                                          % Distribución normal
+
+% Propiedades Modelo de Belykh et al 2017
 
 % Tiempo de incorporación
 Taddvectprima = randi([Tadd_min,Tadd_max],[np-1,1]);                        % Distribución uniforme
@@ -104,8 +116,8 @@ tabla.Taddcum_s = Tadd_cum;
 disp(tabla)                                                                 % Se muestra tabla
 clear tabla
 
-%% Calcular la posición
-
+%% Posición de peatón
+% Calcular en cada tiempo (del vector t_vect) la posición de cada peatón
 % Renombramiento de variables (script estaba listo de antes)
 v = v_vect;                                                                 % Velocidad del peatón
 side = side_vect;                                                           % Lado por el que entrea el peatón
@@ -146,7 +158,8 @@ end
 
 
 %% Generar archivo cargable "load()"
-matObj = matfile('rPedestrianProperties.mat');
+
+matObj = matfile('Pedestrian_Properties.mat');
 matObj.Properties.Writable = true;
 matObj.m = m_vect;                                                          % Vector, Masa de peatones
 matObj.v = v_vect;                                                          % Vector, Velocidad de caminar de peatones

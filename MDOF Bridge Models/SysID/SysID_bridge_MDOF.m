@@ -13,14 +13,17 @@ clc
 
 %% Inputs
 % Rango
-E_min = 3*10^8;   % kN/m2
-E_max = 5.5*10^8;  % kN/m2
-b_min = 1;            % m
-b_max = 10;             % m
-h_min = 0.1;           % m
-h_max = 1;              % m
-rho_vol_min = 1;        % kg/m3
-rho_vol_max = 7;       % kg/m3
+% E_min = 3*10^8;   % kN/m2
+% E_max = 5.5*10^8;  % kN/m2
+% b_min = 1;            % m
+% b_max = 10;             % m
+% h_min = 0.1;           % m
+% h_max = 1;              % m
+EI_min = 2.5*10^6;  % kNm2                                                        % Rigidez mínima
+EI_max = 4.5833*10^10; % kNm2                                                     % Rigidez máxima
+
+rho_vol_min = 1; % kg/m3
+rho_vol_max = 7; % kg/m3
 % w = sqrt(48*E*I/L^3/(rho_lin*L))
 % k = 48*E*I/L^3
 % m = rho_lin*L;

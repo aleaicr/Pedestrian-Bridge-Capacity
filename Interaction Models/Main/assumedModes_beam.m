@@ -1,4 +1,4 @@
-function [Me,Ke,Ce,Ge,wn] = assumedModes_beam_V2(psi,EI,rho_lin,L,zrmodal)
+function [Me,Ke,Ce,Ge] = assumedModes_beam(psi,EI,rho_lin,L,zrmodal)
 % Alexis Contreras R.
 % Pedestrian Bridge Capacity
 
@@ -10,8 +10,8 @@ function [Me,Ke,Ce,Ge,wn] = assumedModes_beam_V2(psi,EI,rho_lin,L,zrmodal)
 % psi           -> (sym) Vector de funciones con las formas modales
 % EI            -> (Escalar) Rigidez de la viga equivalente
 % rho_lin       -> (Escalar) Densidad lineal de la viga equivalente
-% L             -> (Escalar) Largo de la viga equivalente
-% zrmodal       -> (Vector) Razón de amortiguamiento de cada modo
+% L             -> (Escalar) Largo de la viga
+% zrmodal       -> (Vector) Amortiguamiento de cada modo
 
 % Outputs
 % Me            -> (Matriz) de masa equivalente
@@ -35,7 +35,7 @@ Ge = eye(cant_modos,cant_modos);
 % Amortiguamiento modal proporcional
 [~, lambda] = eig(Ke,Me);                                                   % Problema de valores y vectores propios
 wn = sqrt(diag(lambda));  
-Phi = eye(cant_modos);                                                      % Ya que los modos ya están desacoplados, 
+Phi = eye(cant_modos);
 Ce = (Me*Phi)*diag(2*zrmodal.*wn./Me).*(Me*Phi).';                          % Matriz de amortiguamiento
 end
 

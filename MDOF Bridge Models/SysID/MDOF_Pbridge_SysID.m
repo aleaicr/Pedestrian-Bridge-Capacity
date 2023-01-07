@@ -11,7 +11,7 @@
 % E = 450*10^3*10^3; % 200GPa = E9 Pa(N/m2) = E6 kN/m2                        % Modulo de young del material del puente
 % b = 5; % m                                                                  % Ancho de losa de puente
 % h = 2; % m                                                                  % Espesor de losa de puente
-I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
+% I = 1/12*h*b^3; % m4                                                        % Inercia de la sección del puente 
 A = b*h; % m2                                                               % Area de la sección puente
 % rho_vol = 20; % kg/m3                                                       % Densidad volumétrica del puente
 rho_lin = rho_vol*A; % kg/m                                                 % Densidad lineal del puente
