@@ -7,15 +7,15 @@ function [psi_n_pos_i] = sinModalShapes_psiposit(n_modos,L,posi)
 % INPUTS
 % n_modos:      Cantidad de modos para el análisis
 % L:            Largo de la viga equivalente (metros)
-% posi:         Vector de la posición del peatón a lo largo de la viga para  el peatón "i" donde cada fila es para cada tiempo tj hasta el tiempo tf
+% posi:         Vector columna de la posición del peatón a lo largo de la viga para  el peatón "i" donde cada fila es para cada tiempo tj hasta el tiempo tf
 
 
 % OUTPUTS
-% psi_n_pos_i:   Matriz con las funciones de forma modal evaluadas en la posición para cada tiempo para cada modo
-% 3Dimensiones --> tiempo, #modo, #peatón
+% psi_n_pos_i:   Matriz con las funciones de forma modal evaluadas en la posición para cada tiempo para cada modo, 3 Dimensiones --> tiempo, #modo, #peatón
+%%
+
 psi_n_pos_i = zeros(length(posi),n_modos);                                  % length(posi) = t_length -> Cantidades de tiempos
 for n = 1:n_modos
-    psi_n_pos_i(:,n) = sin(2*pi*n/L*posi);
+    psi_n_pos_i(:,n) = sin(pi*n/L*posi);
 end
-
 end

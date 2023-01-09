@@ -1,4 +1,4 @@
-function [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum,x,psi_x] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,n_modos)
+function [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum,pos,psi_posi] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,t_extra,n_modos)
 % Pedestrian Bridge Capacity
 % Alexis Contreras R.
 
@@ -24,7 +24,8 @@ function [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum
 % sigma_lambdai:[-]Desviación estándar de la distribución normal del parámetro de Belykh et al 2017 (lambdai)
 % Tadd_min:     [s] Tiempo mínimo de incorporación consecutiva entre dos poeatones
 % Tadd_max:     [s] Tiempo máximo de incorporación consecutiva entre dos peatones
-% t_step:       [s] Vector que contiene todos los tiempos de la simulación ej (0:0.001:100).' segundos
+% t_step:       [s] Paso temporal para la simulación (1/1000 funciona bien para runge-kutta ode4)
+% t_extra:      [s] Tiempo extra después de agregar el último peatón
 % n_modos:      Cantidad de modos a considerar para obtener la respuesta de la viga equivalente
 
 % OUTPUTS
@@ -95,25 +96,25 @@ pd_length = length(v_vect);                                                 % Ca
 % Aplicación del algoritmo
 pos = zeros(t_length,pd_length);
 x_ = zeros(t_length,pd_length);
-t_vect = (0:t_step:Tadd_cum(end)).';
+t_vect = (0:t_step:(Tadd_cum(end)+t_extra)).';
 
-for i = 1:pd_length
-    for tk = 1:t_length
+for i = 1:pd_length                                                         % Recorremos para cada peatón
+    for tk = 1:t_length                                                     % Para cad atiempo
         xoi = L*(side_vect(i)-1);
-        if t_vect(tk) < Tadd_cum(i)
+        if t_vect(tk) < Tadd_cum(i)                                         % * Si aun no entra
             delta1 = 0;
             delta2 = 0;
-        elseif t_vect(tk) >= Tadd_cum(i)
+        elseif t_vect(tk) >= Tadd_cum(i)                                    % ** si entra
             delta1 = 1;
             delta2 = t_vect(tk) - Tadd_cum(i);
         end
-        x_(tk,i) = xoi*delta1 + v_vect(i)*delta2;
+        x_(tk,i) = xoi*delta1 + v_vect(i)*delta2;                           % * entonces se queda en 0; ** entonces se mueve
         n = floor(x_(tk,i)/L);
-        if rem(n,2) == 0
+        if rem(n,2) == 0                                                    % si sale de la viga, entonces rebota
             pos(tk,i) = x_(tk,i) - n*L;
         elseif rem(n,2) == 1
             pos(tk,i) = (n+1)*L - x_(tk,i);
-        end
+        end                                                                 % y se mantiene en un ciclo
     end
 end
 
@@ -122,7 +123,10 @@ end
 % Obtenemos el vector con las funciones simbólicas psi
 % tenemos pos = [pos1(t) pos2(t) pos3(t) ... posp(t)]
 % donde posi(t) = vector[posi(t1); posi(t2); ... ; posi(tf)]
-% Algoritmo para determinar psi_n(pos(t))
-% psi_n_pos_i(
+
+psi_posi = zeros(t_length,n_modos,pd_length);
+for i = 1:pd_length
+    psi_posi(:,:,i) = sinModalShapes_psiposit(n_modos,L,pos(:,i));
+end
 
 end

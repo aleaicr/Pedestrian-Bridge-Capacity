@@ -52,43 +52,34 @@ Tadd_max = 5; % sec                                                         % Ti
 t_inicial = 0;                                                              % Tiempo inicial de simulación
 t_step = 1/1000;                                                            % Paso temporal de simulación
 t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
+t_extra = 10;                                                               % Tiempo extra de simulación después de que entra el último peatón
+
+%% 
 t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
 t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
-
-
-%%
 BP = load(bp_name);                                                         % Cargar datos del puente
 x_vals = (BP.L/x_parts:BP.L/x_parts:L-BP.L/x_parts).';                      % Vector con todos los puntos para evaluar el desplazamiento en el puente
-% psi = sinModalShapes(n_modos,BP.L);                                         % Funciones de formas de los modos asumidos (sinusoides)
+% psi = sinModalShapes(n_modos,BP.L);                                         % Funciones de formas de los modos asumidos (sinusoides) (simbólicas)
 psi_xvals = sinModalShapes_xvals(n_modos,BP.L,x_vals);                      % Matriz con todas las formas modales evaluadas en x_vals
 
 % Inicializar estructura de datos
-Data = struct();
+Data = struct();                                                            
 
 % Ejecutar simulaciones
 for s = 1:n_sim
-    % Generar propiedades peatones
-    [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum,x,psi_x] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,n_modos);
+    % Generar propiedades aleatorias para cada peatón
+    [mi,vi,fi,wi,ai,lambdai,sidei,Tadd_cum,posi,psi_posi] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,n_modos);
     
-    % Reconocer tiempo máximo de simulación
-        % tiempo Tadd(end) + t_extra
-    tf = Tadd_cum(end) + t_extra;
+    % Tiempo máximo de simulación
+    tf = Tadd_cum(end) + t_extra;                                           % segundos
 
     % Ejecutar simulaciones
-    out = sim(sim_name);
+    out = sim(sim_name);                                                    % realizar la simulación, se obtiene la respuesta del puente
     
+    % Vector de tiempo
+    t_vect = out.tout.Data(:,1);                                            % Vector de tiempo utilizado en la simulación (igual a t_vect anterior)
+
     % Componer desplazamiento real para las posiciones x_vals
     y_bridge = genToPhys(psi_xvals,q,x_vals);                               % out.q.Data es la matriz de respuesta en coordenadas generalizadas
 end
-
-% Inputs peatones
-run 
-PP = load('Pedestrian_Properties.mat');                                     % Struct: 
-
-% Inputs simulaciones
-t_step = 1/1000;
-t_init = 0;
-t_final = 500;
-
-t_vect = (t_init:t_step:t_final).';
 

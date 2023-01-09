@@ -17,7 +17,7 @@ n_max = 20;                                                                 % Ca
 n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo (fijar como 1, no se puede juntar con lel modelo de Belykh et al 2017
 
 % Propiedades puentes (para calcular tiempo de incorporación)
-L = 144; % m                                                                % Longitud del puente
+L = 100; % m                                                                % Longitud del puente
 
 % Distribución normal Masa (Johnson et al 2008)
 mu_m = 71.81;  % kg                                                         % Media de la distribución de masa
@@ -45,11 +45,12 @@ Tadd_max = 5; % sec                                                         % Ti
 
 % Tiempo de simulación
 t_inicial = 0;                                                              % Tiempo inicial de simulación
-t_step = 1/1000;                                                            % Paso temporal de simulación
-t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
-t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
-t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
+t_step = 1/100;                                                            % Paso temporal de simulación
+t_extra = 10;
+% tiempo final = Tadd_cum(end) + t_extra
 
+% Cantidad de modos
+n_modos = 3;
 %% Generación de data
 % m_i: masa del peatón i
 % v_i: velocidad longitudinal del caminar del peatón i
@@ -100,6 +101,12 @@ Tadd_cum = cumsum(Tadd_vect);
 
 % Lado
 side_vect = randi([1,2],[np,1]);                                            % Dicotómico
+
+% t_vect
+t_final = 200;
+% t_final = Tadd_cum(end) + t_extra;                                          % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
+t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
+t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
 
 %% Mostrar tabla
 tabla = table();
@@ -156,6 +163,33 @@ for i = 1:pd_length
     end
 end
 
+figure
+plot(t_vect,x(:,1))
+hold on
+plot(t_vect,x(:,2))
+hold off
+xlabel('tiempo [sec]')
+ylabel('posición del peatón 1')
+grid on
+
+%% Obtener psi_n(x_i)
+% Obtenemos el vector con las funciones simbólicas psi
+% tenemos pos = [pos1(t) pos2(t) pos3(t) ... posp(t)]
+% donde posi(t) = vector[posi(t1); posi(t2); ... ; posi(tf)]
+
+psi_posi = zeros(t_length,n_modos,pd_length);
+for i = 1:pd_length
+    psi_posi(:,:,i) = sinModalShapes_psiposit(n_modos,L,x(:,i));
+end
+% 
+% figure
+% plot(t_vect,psi_posi(:,1,1))
+% hold on
+% plot(t_vect,psi_posi(:,2,1))
+% hold off
+% grid on
+% xlabel('tiempo')
+% ylabel('psi_posi del peatón 1 del modo 1')
 
 %% Generar archivo cargable "load()"
 

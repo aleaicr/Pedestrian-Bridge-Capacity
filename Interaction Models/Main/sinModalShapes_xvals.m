@@ -7,7 +7,7 @@ function [psi_xvals] = sinModalShapes_xvals(n_modos,L,x_vals)
 
 psi_xvals = zeros(length(x_vals),n_modos);
 for n = 1:n_modos
-    psi_xvals(:,n) = sin(2*pi*n/L*x_vals);
+    psi_xvals(:,n) = sin(pi*n/L*x_vals);
 end
 
 end
