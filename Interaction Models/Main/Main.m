@@ -1,5 +1,6 @@
 %% Continuos Beam and Pedestrians Walking
 % Alexis Contreras R.
+
 % Comentarios
 %
 
@@ -51,12 +52,12 @@ Tadd_max = 5; % sec                                                         % Ti
 % Tiempo de simulación
 t_inicial = 0;                                                              % Tiempo inicial de simulación
 t_step = 1/1000;                                                            % Paso temporal de simulación
-t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
+% t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
 t_extra = 10;                                                               % Tiempo extra de simulación después de que entra el último peatón
 
 %% 
-t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
-t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
+% t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
+% t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
 BP = load(bp_name);                                                         % Cargar datos del puente
 x_vals = (BP.L/x_parts:BP.L/x_parts:L-BP.L/x_parts).';                      % Vector con todos los puntos para evaluar el desplazamiento en el puente
 % psi = sinModalShapes(n_modos,BP.L);                                         % Funciones de formas de los modos asumidos (sinusoides) (simbólicas)
