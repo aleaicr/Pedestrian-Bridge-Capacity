@@ -1,2 +1,2 @@
-# Pedestrian-Bridge-Capacity 
-Dynamic modeling of lateral vibrations in pedestrian bridges induced by crowd foot-forces and estimation of the probability of dynamic instability
+# Pedestrian-Bridge-Performance
+Dynamic modeling of footbridge-crowd interaction and perfomance-based approach for lateral vulnerability
