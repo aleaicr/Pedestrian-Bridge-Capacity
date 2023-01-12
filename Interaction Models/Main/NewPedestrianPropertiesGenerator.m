@@ -117,7 +117,8 @@ else
 end
 tabla.Masa_kg = m_vect;
 tabla.Velocidad_m_s = v_vect;
-tabla.Frecuencia_hz = w_vect;
+tabla.Frecuencia_hz = freq_vect;
+tabla.FrecCirc_rad_sec = w_vect;
 tabla.Lado = side_vect;
 tabla.Taddcum_s = Tadd_cum;
 disp(tabla)                                                                 % Se muestra tabla
@@ -167,9 +168,10 @@ figure
 plot(t_vect,x(:,1))
 hold on
 plot(t_vect,x(:,2))
+plot(t_vect,x(:,3))
 hold off
 xlabel('tiempo [sec]')
-ylabel('posición del peatón 1')
+ylabel('posición del peatón 1,2 y 3')
 grid on
 
 %% Obtener psi_n(x_i)
@@ -182,14 +184,14 @@ for i = 1:pd_length
     psi_posi(:,:,i) = sinModalShapes_psiposit(n_modos,L,x(:,i));
 end
 % 
-% figure
-% plot(t_vect,psi_posi(:,1,1))
-% hold on
-% plot(t_vect,psi_posi(:,2,1))
-% hold off
-% grid on
-% xlabel('tiempo')
-% ylabel('psi_posi del peatón 1 del modo 1')
+figure
+plot(t_vect,psi_posi(:,1,1))
+hold on
+plot(t_vect,psi_posi(:,2,1))
+hold off
+grid on
+xlabel('tiempo')
+ylabel('psi_posi del peatón 1 del modo 1')
 
 %% Generar archivo cargable "load()"
 

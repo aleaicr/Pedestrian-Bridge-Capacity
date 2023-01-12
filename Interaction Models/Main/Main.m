@@ -11,9 +11,9 @@ clc
 
 %%  Inputs
 % Inputs Generales
-n_sim = 10;                                                                 % Cantidad de simulaciones a realizar (cantidad de veces que se seleccionarán n peatones)
+n_sim = 1;                                                                 % Cantidad de simulaciones a realizar (cantidad de veces que se seleccionarán n peatones)
 bp_name = 'Bridge_Properties.mat';                                          % Nombre del archivo que contiene los datos del puente
-sim_name = 'pedestrian_sim.slx';                                            % Nombre del Simulink para ejecutar la simulación
+sim_name = 'PedBridge_sim.slx';                                            % Nombre del Simulink para ejecutar la simulación
 n_modos = 3;                                                                % Cantidad de modos asumidos para la respuesta dinámica de la viga equivalente
 x_parts = 10;                                                               % Cantidad de puntos para calcular el desplazamiento máximo
 
@@ -40,7 +40,7 @@ sigma_freq = 0.11;  % hz                                                    % De
 % Distribución normal Propiedades de Modelo de Belykh et al 2017
 % ai
 mu_ai = 1;
-sigma_si = 0.1;
+sigma_ai = 0.1;
 % lambda_i
 mu_lambdai = 1;
 sigma_lambdai = 0.1;
@@ -52,27 +52,28 @@ Tadd_max = 5; % sec                                                         % Ti
 % Tiempo de simulación
 t_inicial = 0;                                                              % Tiempo inicial de simulación
 t_step = 1/1000;                                                            % Paso temporal de simulación
-% t_final = 100;                                                              % Tiempo final de simulación, Debería ser el último Tadd_cum + tiempo extra de simulaci´no
 t_extra = 10;                                                               % Tiempo extra de simulación después de que entra el último peatón
 
-%% 
-% t_vect = (t_inicial:t_step:t_final).';                                      % Vector de tiempos
-% t_length = length(t_vect);                                                  % Cantidad de passo temporales en simulación (puntos)
+%% Data
 BP = load(bp_name);                                                         % Cargar datos del puente
 x_vals = (BP.L/x_parts:BP.L/x_parts:L-BP.L/x_parts).';                      % Vector con todos los puntos para evaluar el desplazamiento en el puente
-% psi = sinModalShapes(n_modos,BP.L);                                         % Funciones de formas de los modos asumidos (sinusoides) (simbólicas)
 psi_xvals = sinModalShapes_xvals(n_modos,BP.L,x_vals);                      % Matriz con todas las formas modales evaluadas en x_vals
 
-% Inicializar estructura de datos
-Data = struct();                                                            
+% Generar matrices State-Space
+As = BP.As;
+Bs = BP.Bs;
+Cs = BP.Cs;
+Ds = BP.Ds;
 
 % Ejecutar simulaciones
 for s = 1:n_sim
     % Generar propiedades aleatorias para cada peatón
-    [mi,vi,fi,wi,ai,lambdai,sidei,Tadd_cum,posi,psi_posi] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,n_modos);
-    
+    [mi,vi,fi,wi,ai,lambdai,side,Tadd_cum,pos,psi_posi] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,t_extra,n_modos);
+
     % Tiempo máximo de simulación
-    tf = Tadd_cum(end) + t_extra;                                           % segundos
+    t_final = Tadd_cum(end) + t_extra;                                      % Tiempo final de simulación
+    t_vect = (t_inicial:t_step:t_final).';                                  % Vector de todos los tiempos
+    t_length = length(t_vect);                                              % Cantidad de pasos temporales
 
     % Ejecutar simulaciones
     out = sim(sim_name);                                                    % realizar la simulación, se obtiene la respuesta del puente

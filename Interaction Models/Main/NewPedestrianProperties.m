@@ -84,6 +84,8 @@ side_vect = randi([1,2],[np,1]);                                            % Di
 % Calcular en cada tiempo (del vector t_vect) la posición de cada peatón
 % Renombramiento de variables (script estaba listo de antes)
 pd_length = length(v_vect);                                                 % Cantidad de peatones
+t_vect = (0:t_step:(Tadd_cum(end)+t_extra)).';                              % Vector de tiempos
+t_length = length(t_vect);                                                  % Cantidad de tiempos
 
 % Algoritmo para determinar posición del peatón (x = pos)
 % xo(i) = L(side(i)-1) = 0
@@ -96,7 +98,6 @@ pd_length = length(v_vect);                                                 % Ca
 % Aplicación del algoritmo
 pos = zeros(t_length,pd_length);
 x_ = zeros(t_length,pd_length);
-t_vect = (0:t_step:(Tadd_cum(end)+t_extra)).';
 
 for i = 1:pd_length                                                         % Recorremos para cada peatón
     for tk = 1:t_length                                                     % Para cad atiempo
@@ -117,7 +118,6 @@ for i = 1:pd_length                                                         % Re
         end                                                                 % y se mantiene en un ciclo
     end
 end
-
 
 %% Obtener psi_n(x_i)
 % Obtenemos el vector con las funciones simbólicas psi
