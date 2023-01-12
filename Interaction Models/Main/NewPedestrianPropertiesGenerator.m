@@ -185,24 +185,25 @@ for i = 1:pd_length
 end
 % 
 figure
-plot(t_vect,psi_posi(:,1,1))
+plot(t_vect,psi_posi(:,1,1),'linewidth',0.1)
 hold on
-plot(t_vect,psi_posi(:,2,1))
+plot(t_vect,psi_posi(:,2,1),'linewidth',0.1)
 hold off
 grid on
 xlabel('tiempo')
 ylabel('psi_posi del peatón 1 del modo 1')
+set(gca,'Color','k')
 
-%% Generar archivo cargable "load()"
-
-matObj = matfile('Pedestrian_Properties.mat');
-matObj.Properties.Writable = true;
-matObj.m = m_vect;                                                          % Vector, Masa de peatones
-matObj.v = v_vect;                                                          % Vector, Velocidad de caminar de peatones
-matObj.freq = freq_vect;                                                    % Vector, Frecuencia de caminar de peatones
-matObj.w = w_vect;                                                          % Vector, Frecuencia angular de peatones
-matObj.Side = side;                                                         % Vector, Lado incorporación al puente de peatones
-matObj.Taddacum = Tadd_cum;                                                 % Vector, Tiempo de incorporación peatón
-matObj.x = x;                                                               % Matriz, Posición peatón en todo tiempo t
-clear matObj
-
+% %% Generar archivo cargable "load()"
+% 
+% matObj = matfile('Pedestrian_Properties.mat');
+% matObj.Properties.Writable = true;
+% matObj.m = m_vect;                                                          % Vector, Masa de peatones
+% matObj.v = v_vect;                                                          % Vector, Velocidad de caminar de peatones
+% matObj.freq = freq_vect;                                                    % Vector, Frecuencia de caminar de peatones
+% matObj.w = w_vect;                                                          % Vector, Frecuencia angular de peatones
+% matObj.Side = side;                                                         % Vector, Lado incorporación al puente de peatones
+% matObj.Taddacum = Tadd_cum;                                                 % Vector, Tiempo de incorporación peatón
+% matObj.x = x;                                                               % Matriz, Posición peatón en todo tiempo t
+% clear matObj
+% 
