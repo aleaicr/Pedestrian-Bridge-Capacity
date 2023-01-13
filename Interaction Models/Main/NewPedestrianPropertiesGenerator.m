@@ -13,7 +13,7 @@ clc
 
 % Cantidad de peatones
 n_min = 1;                                                                  % Primer peatones es 1, si quiero ir de 100 a 200, parto del 101, no del 100
-n_max = 20;                                                                 % Cantidad máxima de peatones
+n_max = 5;                                                                 % Cantidad máxima de peatones
 n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo (fijar como 1, no se puede juntar con lel modelo de Belykh et al 2017
 
 % Propiedades puentes (para calcular tiempo de incorporación)
@@ -45,7 +45,7 @@ Tadd_max = 5; % sec                                                         % Ti
 
 % Tiempo de simulación
 t_inicial = 0;                                                              % Tiempo inicial de simulación
-t_step = 1/100;                                                            % Paso temporal de simulación
+t_step = 1/10;                                                            % Paso temporal de simulación
 t_extra = 10;
 % tiempo final = Tadd_cum(end) + t_extra
 

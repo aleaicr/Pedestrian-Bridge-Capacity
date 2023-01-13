@@ -1,5 +1,5 @@
 function [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum,pos,psi_posi] = NewPedestrianProperties(n_min,n_max,n_step,L,mu_m,sigma_m,mu_v,sigma_v,mu_freq,sigma_freq,mu_ai,sigma_ai,mu_lambdai,sigma_lambdai,Tadd_min,Tadd_max,t_step,t_extra,n_modos)
-% Pedestrian Bridge Capacity
+% Pedestrian Bridge Performance
 % Alexis Contreras R.
 
 % Generador de propiedades aleatorias de peatones.
@@ -34,13 +34,15 @@ function [m_vect,v_vect,freq_vect,w_vect,ai_vect,lambdai_vect,side_vect,Tadd_cum
 
 
 % Comentarios
-% Las distribuciones utilizadas son las siguientes
+% * Las distribuciones utilizadas son las siguientes
 % Masa -  Distribución normal
 % Velocidad - Distribución normal
 % Frecuencia - Distribución normal
 % Parámetros de modelo de Belykh 2017 - ai, lambdai -  Distribución normal
 % Tiempo de incorporación - Distribución uniforme
-% Lado - aleatorio entre 1 y 2 (lado 1 y lado 2) - Distribución uniforme
+% Lado - aleatorio entre 1 y 2 (lado 1 y lado 2) - Dicotómica
+% * Actualmente, el agrupar, solo funciona agrupando todos los peatones en
+% grupos de n_step, no que solo algunos se agrupen.
 
 %% Generación de data (selección aleatoria dentro de distribución)
 % Peatones y grupos
@@ -61,7 +63,7 @@ m_vect = normrnd(mu_m,sigma_m,[np,1]);                                      % Di
 v_vect = normrnd(mu_v,sigma_v,[np,1]);                                      % Distribución normal
 
 % Frecuencia
-freq_vect = normrnd(mu_freq,sigma_freq,[np,1]); % hz                              % Distribución normal
+freq_vect = normrnd(mu_freq,sigma_freq,[np,1]); % hz                        % Distribución normal
 w_vect = 2*pi*freq_vect; % rad/sec                                          % Distribución normal
 
 % Propiedades Modelo de Belykh et al 2017

@@ -11,9 +11,9 @@ clc
 
 %%  Inputs
 % Inputs Generales
-n_sim = 1;                                                                 % Cantidad de simulaciones a realizar (cantidad de veces que se seleccionarán n peatones)
+n_sim = 1;                                                                  % Cantidad de simulaciones a realizar (cantidad de veces que se seleccionarán n peatones)
 bp_name = 'Bridge_Properties.mat';                                          % Nombre del archivo que contiene los datos del puente
-sim_name = 'PedBridge_sim.slx';                                            % Nombre del Simulink para ejecutar la simulación
+sim_name = 'PedBridge_sim.slx';                                             % Nombre del Simulink para ejecutar la simulación
 n_modos = 3;                                                                % Cantidad de modos asumidos para la respuesta dinámica de la viga equivalente
 x_parts = 10;                                                               % Cantidad de puntos para calcular el desplazamiento máximo
 
@@ -22,16 +22,13 @@ n_min = 1;                                                                  % Pr
 n_max = 20;                                                                 % Cantidad máxima de peatones
 n_step = 1;                                                                 % Cuantos peatones van en "cada peatón"/grupo (fijar como 1, no se puede juntar con lel modelo de Belykh et al 2017
 
-% Propiedades puentes (para calcular tiempo de incorporación)
-L = 144; % m                                                                % Longitud del puente
-
 % Distribución normal Masa (Johnson et al 2008)
 mu_m = 71.81;  % kg                                                         % Media de la distribución de masa
 sigma_m = 14.89; % kg                                                       % Desviación estándar de la distribución de masa
 
 % Distribución normal Velocidad (Pachi & Ji, 2005)
 mu_v = 1.3; % m/s                                                           % Media
-sigma_v = 0.13; % m/                                                        % Desviación estándar
+sigma_v = 0.13; % m/s                                                        % Desviación estándar
 
 % Distribución normal Frecuencia (Pachi & Ji 2005)
 mu_freq = 1.8; % hz                                                         % Media                                                       
@@ -45,7 +42,7 @@ sigma_ai = 0.1;
 mu_lambdai = 1;
 sigma_lambdai = 0.1;
 
-% Tiempo de incorporación
+% Tiempo de incorporación, distribución uniforme
 Tadd_min = 0; % sec                                                         % Tiempo de añadir mínimo
 Tadd_max = 5; % sec                                                         % Tiempo de añadir máximo (que espera el peatón i para incorporarse)
 
